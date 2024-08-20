@@ -6,9 +6,15 @@ import jakarta.enterprise.context.SessionScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.faces.model.SelectItem;
+import org.primefaces.model.FilterMeta;
+import org.primefaces.model.SortMeta;
+import org.primefaces.model.LazyDataModel;
+import org.primefaces.model.SortOrder;
+
 import java.io.Serializable;
-import java.util.List;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Named
@@ -23,6 +29,24 @@ public class RequirementBean implements Serializable {
     private String beschreibung;
     private Requirement.Prioritaet prioritaet;
     private Requirement.Status status;
+    private LazyDataModel<Requirement> lazyModel;
+
+    public LazyDataModel<Requirement> getLazyModel() {
+        if (lazyModel == null) {
+            lazyModel = new LazyDataModel<Requirement>() {
+                @Override
+                public List<Requirement> load(int first, int pageSize, Map<String, SortMeta> sortBy, Map<String, FilterMeta> filterBy) {
+                    return requirementService.getRequirements(first, pageSize, sortBy, filterBy);
+                }
+
+                @Override
+                public int count(Map<String, FilterMeta> filterBy) {
+                    return requirementService.countRequirements();
+                }
+            };
+        }
+        return lazyModel;
+    }
 
     public void saveOrUpdateRequirement() {
         if (id == null) {
@@ -47,7 +71,7 @@ public class RequirementBean implements Serializable {
         return requirementService.getAllRequirements();
     }
 
-    private void clearFields() {
+    public void clearFields() {
         id = null;
         titel = "";
         beschreibung = "";

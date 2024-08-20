@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<h:head>
+    <title>User Dashboard</title>
+</h:head>
+
+<h:body>
+    <ui:include src="/WEB-INF/templates/menubar.xhtml" />
+
+    <div class="card">
+        <h:form>
+            <p:panel header="Dashboard">
+                <h:panelGrid columns="2" cellpadding="10">
+                    <h:outputText value="Welcome, " />
+                    <h:outputText value="#{loginBean.currentUser.username}" style="font-weight: bold" />
+
+                    <h:outputText value="Your role: " />
+                    <h:outputText value="#{loginBean.currentUser.role}" style="font-weight: bold" />
+                </h:panelGrid>
+            </p:panel>
+
+            <p:panel header="Quick Statistics" style="margin-top: 20px;">
+                <h:panelGrid columns="2" cellpadding="10">
+                    <h:outputText value="Total Requirements: " />
+                    <h:outputText value="#{dashboardBean.totalRequirements}" style="font-weight: bold" />
+
+                    <h:outputText value="Total Test Cases: " />
+                    <h:outputText value="#{dashboardBean.totalTestCases}" style="font-weight: bold" />
+
+                    <h:outputText value="Your Assigned Test Cases: " />
+
+                </h:panelGrid>
+            </p:panel>
+        </h:form>
+    </div>
+</h:body>
+</html>

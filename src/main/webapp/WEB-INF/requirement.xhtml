@@ -11,7 +11,7 @@
 <h:body>
    <ui:include src="/WEB-INF/templates/menubar.xhtml" />
    <h:form id="requirementForm">
-      <p:panel header="Create/Edit Requirement">
+      <p:panel header="Create/Edit Requirements">
          <p:messages id="messages" showDetail="true" closable="true">
             <p:autoUpdate />
          </p:messages>
@@ -36,18 +36,19 @@
             </p:selectOneMenu>
          </h:panelGrid>
 
-         <p:commandButton value="Save" action="#{requirementBean.saveOrUpdateRequirement}" update="requirementForm:messages requirementTable" />
-         <p:commandButton value="Clear" type="reset" />
+         <p:commandButton value="Save" action="#{requirementBean.saveOrUpdateRequirement}" update="requirementForm:messages requirementTable requirementForm" />
+         <p:commandButton value="Clear" action="#{requirementBean.clearFields}" update="requirementForm:messages requirementTable requirementForm" />
       </p:panel>
    </h:form>
 
-   <p:dataTable id="requirementTable" var="requirement" value="#{requirementBean.allRequirements}"
-                paginator="true" rows="10" paginatorPosition="bottom">
+   <p:dataTable id="requirementTable" var="requirement" value="#{requirementBean.lazyModel}"
+                paginator="true" rows="10" paginatorPosition="bottom"
+                lazy="true" sortMode="multiple" filterMode="server">
       <f:facet name="header">
          Requirements List
       </f:facet>
 
-      <p:column headerText="ID" sortBy="#{requirement.id}">
+      <p:column headerText="ID" sortBy="#{requirement.id}" filterBy="#{requirement.id}">
          <h:outputText value="#{requirement.id}" />
       </p:column>
 
@@ -55,7 +56,7 @@
          <h:outputText value="#{requirement.titel}" />
       </p:column>
 
-      <p:column headerText="Description">
+      <p:column headerText="Description" sortBy="#{requirement.beschreibung}" filterBy="#{requirement.beschreibung}">
          <h:outputText value="#{requirement.beschreibung}" />
       </p:column>
 
@@ -68,10 +69,9 @@
       </p:column>
 
       <p:column headerText="Actions">
+
          <p:commandButton icon="pi pi-pencil" action="#{requirementBean.editRequirement(requirement)}"
-                          update="requirementForm" >
-            <f:setPropertyActionListener target="#{requirementBean.id}" value="#{requirement.id}" />
-         </p:commandButton>
+                          update="requirementForm" />
          <p:commandButton icon="pi pi-trash" action="#{requirementBean.deleteRequirement(requirement)}"
                           update="requirementTable" >
             <p:confirm header="Confirmation" message="Are you sure you want to delete this requirement?" icon="pi pi-exclamation-triangle" />

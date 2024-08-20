@@ -1,47 +1,19 @@
 package com.example.ipwa02_07.services;
 
 import com.example.ipwa02_07.entities.Requirement;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.transaction.Transactional;
+import org.primefaces.model.FilterMeta;
+import org.primefaces.model.SortMeta;
+
 import java.util.List;
+import java.util.Map;
 
-@ApplicationScoped
-public class RequirementService {
-
-    @PersistenceContext
-    private EntityManager em;
-
-    @Transactional
-    public void createRequirement(Requirement requirement) {
-        em.persist(requirement);
-    }
-
-    public Requirement getRequirement(Long id) {
-        return em.find(Requirement.class, id);
-    }
-
-    public List<Requirement> getAllRequirements() {
-        return em.createQuery("SELECT r FROM Requirement r", Requirement.class).getResultList();
-    }
-
-    @Transactional
-    public void updateRequirement(Requirement requirement) {
-        em.merge(requirement);
-    }
-
-    @Transactional
-    public void deleteRequirement(Long id) {
-        Requirement requirement = getRequirement(id);
-        if (requirement != null) {
-            em.remove(requirement);
-        }
-    }
-
-    public List<Requirement> getRequirementsByPriority(Requirement.Prioritaet priority) {
-        return em.createQuery("SELECT r FROM Requirement r WHERE r.prioritaet = :priority", Requirement.class)
-                .setParameter("priority", priority)
-                .getResultList();
-    }
+public interface RequirementService {
+    List<Requirement> getRequirements(int first, int pageSize, Map<String, SortMeta> sortBy, Map<String, FilterMeta> filterBy);
+    int countRequirements();
+    void createRequirement(Requirement requirement);
+    Requirement getRequirement(Long id);
+    List<Requirement> getAllRequirements();
+    void updateRequirement(Requirement requirement);
+    void deleteRequirement(Long id);
+    List<Requirement> getRequirementsByPriority(Requirement.Prioritaet priority);
 }
