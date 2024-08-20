@@ -23,7 +23,7 @@ public class TestCase implements Serializable {
     @Column(nullable = false, length = 1000)
     private String erwartetesResultat;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "anforderung_id", nullable = false)
     private Requirement anforderung;
 

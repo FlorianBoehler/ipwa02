@@ -3,9 +3,11 @@ package com.example.ipwa02_07.entities;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Table(name = "anforderungen")
+@Table(name = "requirements")
 public class Requirement implements Serializable {
 
     @Id
@@ -26,6 +28,9 @@ public class Requirement implements Serializable {
 
     @Column(name = "erstellungs_datum", nullable = false)
     private LocalDateTime erstellungsDatum;
+
+    @OneToMany(mappedBy = "anforderung", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TestCase> testCases = new ArrayList<>();
 
     // Konstruktoren
     public Requirement() {
@@ -86,6 +91,25 @@ public class Requirement implements Serializable {
 
     public void setErstellungsDatum(LocalDateTime erstellungsDatum) {
         this.erstellungsDatum = erstellungsDatum;
+    }
+
+    public List<TestCase> getTestCases() {
+        return testCases;
+    }
+
+    public void setTestCases(List<TestCase> testCases) {
+        this.testCases = testCases;
+    }
+
+    // Hilfsmethoden für die Verwaltung der Beziehung
+    public void addTestCase(TestCase testCase) {
+        testCases.add(testCase);
+        testCase.setAnforderung(this);
+    }
+
+    public void removeTestCase(TestCase testCase) {
+        testCases.remove(testCase);
+        testCase.setAnforderung(null);
     }
 
     // Enums für Priorität und Status
