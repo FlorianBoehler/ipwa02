@@ -2,8 +2,9 @@ package com.example.ipwa02_07.entities;
 
 import jakarta.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -12,6 +13,9 @@ public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
+    private boolean active = true;
 
     @Column(nullable = false, unique = true)
     private String username;
@@ -26,8 +30,8 @@ public class User implements Serializable {
     @Column(nullable = false)
     private UserRole role;
 
-    @OneToMany(mappedBy = "assignedTester", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<TestCase> assignedTestCases;
+    @OneToMany(mappedBy = "assignedUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<TestCase> assignedTestCases = new ArrayList<>();
 
     // Constructors
     public User() {}
@@ -37,6 +41,11 @@ public class User implements Serializable {
         this.password = password;
         this.email = email;
         this.role = role;
+    }
+
+    public User(String username, String password, String email, UserRole role, boolean active) {
+        this(username, password, email, role);
+        this.active = active;
     }
 
     // Copy constructor
@@ -49,6 +58,36 @@ public class User implements Serializable {
         // Note: We don't copy assignedTestCases to avoid potential issues with lazy loading
     }
 
+
+
+    // equals and hashCode methods
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return active == user.active &&
+                Objects.equals(id, user.id) &&
+                Objects.equals(username, user.username) &&
+                Objects.equals(email, user.email) &&
+                role == user.role;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, username, email, role, active);
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", role=" + role +
+                ", active=" + active +
+                '}';
+    }
     // Getters and Setters
     public Long getId() {
         return id;
@@ -90,12 +129,31 @@ public class User implements Serializable {
         this.role = role;
     }
 
-    public Set<TestCase> getAssignedTestCases() {
+    public List<TestCase> getAssignedTestCases() {
         return assignedTestCases;
     }
 
-    public void setAssignedTestCases(Set<TestCase> assignedTestCases) {
+    public void setAssignedTestCases(List<TestCase> assignedTestCases) {
         this.assignedTestCases = assignedTestCases;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    // Helper methods for managing the bidirectional relationship
+    public void addTestCase(TestCase testCase) {
+        assignedTestCases.add(testCase);
+        testCase.setAssignedUser(this);
+    }
+
+    public void removeTestCase(TestCase testCase) {
+        assignedTestCases.remove(testCase);
+        testCase.setAssignedUser(null);
     }
 
     // Enum for User Roles
@@ -103,34 +161,9 @@ public class User implements Serializable {
         REQUIREMENTS_ENGINEER,
         TEST_MANAGER,
         TEST_CREATOR,
-        TESTER
+        TESTER,
+        ADMIN
     }
 
-    // equals and hashCode methods
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return Objects.equals(id, user.id) &&
-                Objects.equals(username, user.username) &&
-                Objects.equals(email, user.email) &&
-                role == user.role;
-    }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, username, email, role);
-    }
-
-    // toString method for debugging
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", email='" + email + '\'' +
-                ", role=" + role +
-                '}';
-    }
 }

@@ -22,6 +22,8 @@ public class UserBean implements Serializable {
     private User user = new User();
     private List<User> users;
     private User selectedUser;
+    private String newPassword;
+    private String confirmPassword;
 
     @PostConstruct
     public void init() {
@@ -43,24 +45,28 @@ public class UserBean implements Serializable {
                 FacesContext.getCurrentInstance().addMessage(null,
                         new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "User updated successfully"));
             }
-            loadUsers(); // Reload the user list
-            user = new User(); // Reset the form
+            loadUsers();
+            clearForm();
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Failed to save user: " + e.getMessage()));
         }
     }
 
-    public void deleteUser() {
-        try {
-            userService.deleteUser(user.getId());
+        public void changePassword() {
+        if (!newPassword.equals(confirmPassword)) {
             FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "User deleted successfully"));
-            loadUsers();
-            clearForm();
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Passwords do not match"));
+            return;
+        }
+        try {
+            userService.changePassword(user.getId(), newPassword);
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Password changed successfully"));
+            clearPasswordFields();
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Failed to delete user: " + e.getMessage()));
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Failed to change password: " + e.getMessage()));
         }
     }
 
@@ -73,6 +79,12 @@ public class UserBean implements Serializable {
     public void clearForm() {
         user = new User();
         selectedUser = null;
+        clearPasswordFields();
+    }
+
+    private void clearPasswordFields() {
+        newPassword = null;
+        confirmPassword = null;
     }
 
     public List<User.UserRole> getAvailableRoles() {
@@ -85,4 +97,9 @@ public class UserBean implements Serializable {
     public List<User> getUsers() { return users; }
     public User getSelectedUser() { return selectedUser; }
     public void setSelectedUser(User selectedUser) { this.selectedUser = selectedUser; }
+    public String getNewPassword() { return newPassword; }
+    public void setNewPassword(String newPassword) { this.newPassword = newPassword; }
+    public String getConfirmPassword() { return confirmPassword; }
+    public void setConfirmPassword(String confirmPassword) { this.confirmPassword = confirmPassword; }
+
 }

@@ -3,11 +3,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 <h:head>
     <title>Test Run Management</title>
 </h:head>
 <h:body>
+    <ui:include src="/WEB-INF/templates/menubar.xhtml" />
     <h:form id="testRunForm">
         <p:panel header="Create/Edit Test Run">
             <p:panelGrid columns="2">
@@ -52,13 +54,13 @@
 
         <p:column headerText="Start Date" sortBy="#{testRun.startDate}">
             <h:outputText value="#{testRun.startDate}">
-                <f:convertDateTime pattern="yyyy-MM-dd" />
+                <f:convertDateTime type="localDate" pattern="yyyy-MM-dd" />
             </h:outputText>
         </p:column>
 
         <p:column headerText="End Date" sortBy="#{testRun.endDate}">
             <h:outputText value="#{testRun.endDate}">
-                <f:convertDateTime pattern="yyyy-MM-dd" />
+                <f:convertDateTime type="localDate" pattern="yyyy-MM-dd" />
             </h:outputText>
         </p:column>
 

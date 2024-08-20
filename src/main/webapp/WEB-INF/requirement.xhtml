@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+<h:head>
+   <title>Requirement Management</title>
+</h:head>
+<h:body>
+   <ui:include src="/WEB-INF/templates/menubar.xhtml" />
+   <h:form id="requirementForm">
+      <p:panel header="Create/Edit Requirement">
+         <p:messages id="messages" showDetail="true" closable="true">
+            <p:autoUpdate />
+         </p:messages>
+
+         <h:panelGrid columns="2" cellpadding="5">
+            <p:outputLabel for="title" value="Title:" />
+            <p:inputText id="title" value="#{requirementBean.titel}" required="true" maxlength="100" />
+
+            <p:outputLabel for="description" value="Description:" />
+            <p:inputTextarea id="description" value="#{requirementBean.beschreibung}" required="true" rows="3" cols="50" />
+
+            <p:outputLabel for="priority" value="Priority:" />
+            <p:selectOneMenu id="priority" value="#{requirementBean.prioritaet}" required="true">
+               <f:selectItem itemLabel="Select Priority" itemValue="" />
+               <f:selectItems value="#{requirementBean.priorityOptions}" />
+            </p:selectOneMenu>
+
+            <p:outputLabel for="status" value="Status:" />
+            <p:selectOneMenu id="status" value="#{requirementBean.status}" required="true">
+               <f:selectItem itemLabel="Select Status" itemValue="" />
+               <f:selectItems value="#{requirementBean.statusOptions}" />
+            </p:selectOneMenu>
+         </h:panelGrid>
+
+         <p:commandButton value="Save" action="#{requirementBean.saveOrUpdateRequirement}" update="requirementForm:messages requirementTable" />
+         <p:commandButton value="Clear" type="reset" />
+      </p:panel>
+   </h:form>
+
+   <p:dataTable id="requirementTable" var="requirement" value="#{requirementBean.allRequirements}"
+                paginator="true" rows="10" paginatorPosition="bottom">
+      <f:facet name="header">
+         Requirements List
+      </f:facet>
+
+      <p:column headerText="ID" sortBy="#{requirement.id}">
+         <h:outputText value="#{requirement.id}" />
+      </p:column>
+
+      <p:column headerText="Title" sortBy="#{requirement.titel}" filterBy="#{requirement.titel}">
+         <h:outputText value="#{requirement.titel}" />
+      </p:column>
+
+      <p:column headerText="Description">
+         <h:outputText value="#{requirement.beschreibung}" />
+      </p:column>
+
+      <p:column headerText="Priority" sortBy="#{requirement.prioritaet}" filterBy="#{requirement.prioritaet}">
+         <h:outputText value="#{requirement.prioritaet}" />
+      </p:column>
+
+      <p:column headerText="Status" sortBy="#{requirement.status}" filterBy="#{requirement.status}">
+         <h:outputText value="#{requirement.status}" />
+      </p:column>
+
+      <p:column headerText="Actions">
+         <p:commandButton icon="pi pi-pencil" action="#{requirementBean.editRequirement(requirement)}"
+                          update="requirementForm" >
+            <f:setPropertyActionListener target="#{requirementBean.id}" value="#{requirement.id}" />
+         </p:commandButton>
+         <p:commandButton icon="pi pi-trash" action="#{requirementBean.deleteRequirement(requirement)}"
+                          update="requirementTable" >
+            <p:confirm header="Confirmation" message="Are you sure you want to delete this requirement?" icon="pi pi-exclamation-triangle" />
+         </p:commandButton>
+      </p:column>
+   </p:dataTable>
+
+   <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+      <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+      <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times" />
+   </p:confirmDialog>
+</h:body>
+</html>

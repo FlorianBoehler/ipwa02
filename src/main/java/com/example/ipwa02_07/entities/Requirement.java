@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "anforderungen")
-public class Anforderung implements Serializable {
+public class Requirement implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,10 +28,10 @@ public class Anforderung implements Serializable {
     private LocalDateTime erstellungsDatum;
 
     // Konstruktoren
-    public Anforderung() {
+    public Requirement() {
     }
 
-    public Anforderung(String titel, String beschreibung, Prioritaet prioritaet, Status status) {
+    public Requirement(String titel, String beschreibung, Prioritaet prioritaet, Status status) {
         this.titel = titel;
         this.beschreibung = beschreibung;
         this.prioritaet = prioritaet;
