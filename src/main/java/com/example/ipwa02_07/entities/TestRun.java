@@ -3,6 +3,9 @@ package com.example.ipwa02_07.entities;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.Iterator;
 
 @Entity
 @Table(name = "test_runs")
@@ -27,6 +30,9 @@ public class TestRun implements Serializable {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TestRunStatus status;
+
+    @OneToMany(mappedBy = "testRun", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private Set<TestRunTestCase> testRunTestCases = new HashSet<>();
 
     public TestRun() {}
 
@@ -84,5 +90,34 @@ public class TestRun implements Serializable {
 
     public void setStatus(TestRunStatus status) {
         this.status = status;
+    }
+
+    public Set<TestRunTestCase> getTestRunTestCases() {
+        return testRunTestCases;
+    }
+
+    public void setTestRunTestCases(Set<TestRunTestCase> testRunTestCases) {
+        this.testRunTestCases = testRunTestCases;
+    }
+
+    public void addTestRunTestCase(TestCase testCase) {
+        TestRunTestCase testRunTestCase = new TestRunTestCase(this, testCase);
+        if (!testRunTestCases.contains(testRunTestCase)) {
+            testRunTestCases.add(testRunTestCase);
+            testCase.getTestRunTestCases().add(testRunTestCase);
+        }
+    }
+
+    public void removeTestRunTestCase(TestCase testCase) {
+        for (Iterator<TestRunTestCase> iterator = testRunTestCases.iterator(); iterator.hasNext(); ) {
+            TestRunTestCase testRunTestCase = iterator.next();
+            if (testRunTestCase.getTestRun().equals(this) &&
+                    testRunTestCase.getTestCase().equals(testCase)) {
+                iterator.remove();
+                testCase.getTestRunTestCases().remove(testRunTestCase);
+                testRunTestCase.setTestRun(null);
+                testRunTestCase.setTestCase(null);
+            }
+        }
     }
 }

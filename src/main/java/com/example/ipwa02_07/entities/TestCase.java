@@ -2,6 +2,8 @@ package com.example.ipwa02_07.entities;
 
 import jakarta.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "testcases")
@@ -26,6 +28,9 @@ public class TestCase implements Serializable {
     @ManyToOne
     @JoinColumn(name = "requirement_id", nullable = false)
     private Requirement requirement;
+
+    @OneToMany(mappedBy = "testCase", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<TestRunTestCase> testRunTestCases = new HashSet<>();
 
     // Constructors, Getters and Setters
 
@@ -98,5 +103,13 @@ public class TestCase implements Serializable {
 
     public void setAssignedUser(User assignedUser) {
         this.assignedUser = assignedUser;
+    }
+
+    public Set<TestRunTestCase> getTestRunTestCases() {
+        return testRunTestCases;
+    }
+
+    public void setTestRunTestCases(Set<TestRunTestCase> testRunTestCases) {
+        this.testRunTestCases = testRunTestCases;
     }
 }
