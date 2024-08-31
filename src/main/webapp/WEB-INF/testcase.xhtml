@@ -16,6 +16,8 @@
                 <p:autoUpdate />
             </p:messages>
 
+            <h:inputHidden value="#{testCaseBean.id}" />
+
             <h:panelGrid columns="2" cellpadding="5">
                 <p:outputLabel for="title" value="Title:" />
                 <p:inputText id="title" value="#{testCaseBean.title}" required="true" maxlength="100" />
@@ -36,8 +38,8 @@
                 </p:selectOneMenu>
             </h:panelGrid>
 
-            <p:commandButton value="Save" action="#{testCaseBean.addTestCase}" update="testCaseForm:messages testCaseTable" />
-            <p:commandButton value="Clear" type="reset" />
+            <p:commandButton value="Save" action="#{testCaseBean.saveOrUpdateTestCase}" update="testCaseForm:messages testCaseTable testCaseForm" />
+            <p:commandButton value="Cancel" action="#{testCaseBean.clearFields}" update="testCaseForm" immediate="true" />
         </p:panel>
     </h:form>
 

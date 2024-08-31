@@ -29,10 +29,24 @@ public class TestCaseBean implements Serializable {
     private String expectedResult;
     private Long selectedRequirementId;
 
-    public void addTestCase() {
+    public void saveOrUpdateTestCase() {
         Requirement requirement = requirementService.getRequirement(selectedRequirementId);
-        TestCase newTestCase = new TestCase(title, description, prerequisites, expectedResult, requirement);
-        testCaseService.createTestCase(newTestCase);
+        if (id == null) {
+            // This is a new test case
+            TestCase newTestCase = new TestCase(title, description, prerequisites, expectedResult, requirement);
+            testCaseService.createTestCase(newTestCase);
+        } else {
+            // This is an existing test case that needs to be updated
+            TestCase existingTestCase = testCaseService.getTestCase(id);
+            if (existingTestCase != null) {
+                existingTestCase.setTitle(title);
+                existingTestCase.setDescription(description);
+                existingTestCase.setPrerequisites(prerequisites);
+                existingTestCase.setExpectedResult(expectedResult);
+                existingTestCase.setRequirement(requirement);
+                testCaseService.updateTestCase(existingTestCase);
+            }
+        }
         clearFields();
     }
 
@@ -60,7 +74,7 @@ public class TestCaseBean implements Serializable {
                 .collect(Collectors.toList());
     }
 
-    private void clearFields() {
+    public void clearFields() {
         id = null;
         title = "";
         description = "";
