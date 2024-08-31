@@ -12,37 +12,38 @@ public class TestCase implements Serializable {
     private Long id;
 
     @Column(nullable = false, length = 100)
-    private String titel;
+    private String title;
 
     @Column(nullable = false, length = 1000)
-    private String beschreibung;
+    private String description;
 
     @Column(length = 1000)
-    private String voraussetzungen;
+    private String prerequisites;
 
     @Column(nullable = false, length = 1000)
-    private String erwartetesResultat;
+    private String expectedResult;
 
     @ManyToOne
-    @JoinColumn(name = "anforderung_id", nullable = false)
-    private Requirement anforderung;
+    @JoinColumn(name = "requirement_id", nullable = false)
+    private Requirement requirement;
 
-    // Konstruktoren, Getter und Setter
+    // Constructors, Getters and Setters
 
     public TestCase() {}
 
-    public TestCase(String titel, String beschreibung, String voraussetzungen, String erwartetesResultat, Requirement anforderung) {
-        this.titel = titel;
-        this.beschreibung = beschreibung;
-        this.voraussetzungen = voraussetzungen;
-        this.erwartetesResultat = erwartetesResultat;
-        this.anforderung = anforderung;
+    public TestCase(String title, String description, String prerequisites, String expectedResult, Requirement requirement) {
+        this.title = title;
+        this.description = description;
+        this.prerequisites = prerequisites;
+        this.expectedResult = expectedResult;
+        this.requirement = requirement;
     }
+
     @ManyToOne
     @JoinColumn(name = "assigned_user_id")
     private User assignedUser;
 
-    // Getter und Setter für alle Felder
+    // Getters and Setters for all fields
     public Long getId() {
         return id;
     }
@@ -51,44 +52,44 @@ public class TestCase implements Serializable {
         this.id = id;
     }
 
-    public String getTitel() {
-        return titel;
+    public String getTitle() {
+        return title;
     }
 
-    public void setTitel(String titel) {
-        this.titel = titel;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public String getBeschreibung() {
-        return beschreibung;
+    public String getDescription() {
+        return description;
     }
 
-    public void setBeschreibung(String beschreibung) {
-        this.beschreibung = beschreibung;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public String getVoraussetzungen() {
-        return voraussetzungen;
+    public String getPrerequisites() {
+        return prerequisites;
     }
 
-    public void setVoraussetzungen(String voraussetzungen) {
-        this.voraussetzungen = voraussetzungen;
+    public void setPrerequisites(String prerequisites) {
+        this.prerequisites = prerequisites;
     }
 
-    public String getErwartetesResultat() {
-        return erwartetesResultat;
+    public String getExpectedResult() {
+        return expectedResult;
     }
 
-    public void setErwartetesResultat(String erwartetesResultat) {
-        this.erwartetesResultat = erwartetesResultat;
+    public void setExpectedResult(String expectedResult) {
+        this.expectedResult = expectedResult;
     }
 
-    public Requirement getAnforderung() {
-        return anforderung;
+    public Requirement getRequirement() {
+        return requirement;
     }
 
-    public void setAnforderung(Requirement anforderung) {
-        this.anforderung = anforderung;
+    public void setRequirement(Requirement requirement) {
+        this.requirement = requirement;
     }
 
     public User getAssignedUser() {

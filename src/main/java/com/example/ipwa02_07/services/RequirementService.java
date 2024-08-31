@@ -15,5 +15,5 @@ public interface RequirementService {
     List<Requirement> getAllRequirements();
     void updateRequirement(Requirement requirement);
     void deleteRequirement(Long id);
-    List<Requirement> getRequirementsByPriority(Requirement.Prioritaet priority);
+    List<Requirement> getRequirementsByPriority(Requirement.Priority priority);
 }

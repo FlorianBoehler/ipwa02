@@ -3,9 +3,11 @@ package com.example.ipwa02_07.entities;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Table(name = "anforderungen")
+@Table(name = "requirements")
 public class Requirement implements Serializable {
 
     @Id
@@ -13,33 +15,36 @@ public class Requirement implements Serializable {
     private Long id;
 
     @Column(nullable = false)
-    private String titel;
+    private String title;
 
     @Column(length = 1000)
-    private String beschreibung;
+    private String description;
 
     @Enumerated(EnumType.STRING)
-    private Prioritaet prioritaet;
+    private Priority priority;
 
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @Column(name = "erstellungs_datum", nullable = false)
-    private LocalDateTime erstellungsDatum;
+    @Column(name = "creationDate", nullable = false)
+    private LocalDateTime creationDate;
 
-    // Konstruktoren
+    @OneToMany(mappedBy = "requirement", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TestCase> testCases = new ArrayList<>();
+
+    // Constructors
     public Requirement() {
     }
 
-    public Requirement(String titel, String beschreibung, Prioritaet prioritaet, Status status) {
-        this.titel = titel;
-        this.beschreibung = beschreibung;
-        this.prioritaet = prioritaet;
+    public Requirement(String title, String description, Priority priority, Status status) {
+        this.title = title;
+        this.description = description;
+        this.priority = priority;
         this.status = status;
-        this.erstellungsDatum = LocalDateTime.now();
+        this.creationDate = LocalDateTime.now();
     }
 
-    // Getter und Setter
+    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -48,28 +53,28 @@ public class Requirement implements Serializable {
         this.id = id;
     }
 
-    public String getTitel() {
-        return titel;
+    public String getTitle() {
+        return title;
     }
 
-    public void setTitel(String titel) {
-        this.titel = titel;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public String getBeschreibung() {
-        return beschreibung;
+    public String getDescription() {
+        return description;
     }
 
-    public void setBeschreibung(String beschreibung) {
-        this.beschreibung = beschreibung;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public Prioritaet getPrioritaet() {
-        return prioritaet;
+    public Priority getPriority() {
+        return priority;
     }
 
-    public void setPrioritaet(Prioritaet prioritaet) {
-        this.prioritaet = prioritaet;
+    public void setPriority(Priority priority) {
+        this.priority = priority;
     }
 
     public Status getStatus() {
@@ -80,33 +85,52 @@ public class Requirement implements Serializable {
         this.status = status;
     }
 
-    public LocalDateTime getErstellungsDatum() {
-        return erstellungsDatum;
+    public LocalDateTime getCreationDate() {
+        return creationDate;
     }
 
-    public void setErstellungsDatum(LocalDateTime erstellungsDatum) {
-        this.erstellungsDatum = erstellungsDatum;
+    public void setCreationDate(LocalDateTime creationDate) {
+        this.creationDate = creationDate;
     }
 
-    // Enums für Priorität und Status
-    public enum Prioritaet {
+    public List<TestCase> getTestCases() {
+        return testCases;
+    }
+
+    public void setTestCases(List<TestCase> testCases) {
+        this.testCases = testCases;
+    }
+
+    // Helper methods for managing relationships
+    public void addTestCase(TestCase testCase) {
+        testCases.add(testCase);
+        testCase.setRequirement(this);
+    }
+
+    public void removeTestCase(TestCase testCase) {
+        testCases.remove(testCase);
+        testCase.setRequirement(null);
+    }
+
+    // Enums for Priority and Status
+    public enum Priority {
         MUST, SHOULD, COULD
     }
 
     public enum Status {
-        NEU, IN_BEARBEITUNG, ABGESCHLOSSEN
+        NEW, IN_PROGRESS, COMPLETED
     }
 
-    // Optional: toString Methode für einfachere Debugging
+    // Optional: toString method for easier debugging
     @Override
     public String toString() {
-        return "Anforderung{" +
+        return "Requirement{" +
                 "id=" + id +
-                ", titel='" + titel + '\'' +
-                ", beschreibung='" + beschreibung + '\'' +
-                ", prioritaet=" + prioritaet +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", priority=" + priority +
                 ", status=" + status +
-                ", erstellungsDatum=" + erstellungsDatum +
+                ", creationDate=" + creationDate +
                 '}';
     }
 }

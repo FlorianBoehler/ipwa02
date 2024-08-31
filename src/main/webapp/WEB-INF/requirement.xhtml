@@ -18,13 +18,13 @@
 
          <h:panelGrid columns="2" cellpadding="5">
             <p:outputLabel for="title" value="Title:" />
-            <p:inputText id="title" value="#{requirementBean.titel}" required="true" maxlength="100" />
+            <p:inputText id="title" value="#{requirementBean.title}" required="true" maxlength="100" />
 
             <p:outputLabel for="description" value="Description:" />
-            <p:inputTextarea id="description" value="#{requirementBean.beschreibung}" required="true" rows="3" cols="50" />
+            <p:inputTextarea id="description" value="#{requirementBean.description}" required="true" rows="3" cols="50" />
 
             <p:outputLabel for="priority" value="Priority:" />
-            <p:selectOneMenu id="priority" value="#{requirementBean.prioritaet}" required="true">
+            <p:selectOneMenu id="priority" value="#{requirementBean.priority}" required="true">
                <f:selectItem itemLabel="Select Priority" itemValue="" />
                <f:selectItems value="#{requirementBean.priorityOptions}" />
             </p:selectOneMenu>
@@ -52,16 +52,16 @@
          <h:outputText value="#{requirement.id}" />
       </p:column>
 
-      <p:column headerText="Title" sortBy="#{requirement.titel}" filterBy="#{requirement.titel}">
-         <h:outputText value="#{requirement.titel}" />
+      <p:column headerText="Title" sortBy="#{requirement.title}" filterBy="#{requirement.title}">
+         <h:outputText value="#{requirement.title}" />
       </p:column>
 
-      <p:column headerText="Description" sortBy="#{requirement.beschreibung}" filterBy="#{requirement.beschreibung}">
-         <h:outputText value="#{requirement.beschreibung}" />
+      <p:column headerText="Description" sortBy="#{requirement.description}" filterBy="#{requirement.description}">
+         <h:outputText value="#{requirement.description}" />
       </p:column>
 
-      <p:column headerText="Priority" sortBy="#{requirement.prioritaet}" filterBy="#{requirement.prioritaet}">
-         <h:outputText value="#{requirement.prioritaet}" />
+      <p:column headerText="Priority" sortBy="#{requirement.priority}" filterBy="#{requirement.priority}">
+         <h:outputText value="#{requirement.priority}" />
       </p:column>
 
       <p:column headerText="Status" sortBy="#{requirement.status}" filterBy="#{requirement.status}">
@@ -69,7 +69,6 @@
       </p:column>
 
       <p:column headerText="Actions">
-
          <p:commandButton icon="pi pi-pencil" action="#{requirementBean.editRequirement(requirement)}"
                           update="requirementForm" />
          <p:commandButton icon="pi pi-trash" action="#{requirementBean.deleteRequirement(requirement)}"

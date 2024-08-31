@@ -23,15 +23,15 @@ public class TestCaseBean implements Serializable {
     private RequirementService requirementService;
 
     private Long id;
-    private String titel;
-    private String beschreibung;
-    private String voraussetzungen;
-    private String erwartetesResultat;
+    private String title;
+    private String description;
+    private String prerequisites;
+    private String expectedResult;
     private Long selectedRequirementId;
 
     public void addTestCase() {
         Requirement requirement = requirementService.getRequirement(selectedRequirementId);
-        TestCase newTestCase = new TestCase(titel, beschreibung, voraussetzungen, erwartetesResultat, requirement);
+        TestCase newTestCase = new TestCase(title, description, prerequisites, expectedResult, requirement);
         testCaseService.createTestCase(newTestCase);
         clearFields();
     }
@@ -42,11 +42,11 @@ public class TestCaseBean implements Serializable {
 
     public void editTestCase(TestCase testCase) {
         this.id = testCase.getId();
-        this.titel = testCase.getTitel();
-        this.beschreibung = testCase.getBeschreibung();
-        this.voraussetzungen = testCase.getVoraussetzungen();
-        this.erwartetesResultat = testCase.getErwartetesResultat();
-        this.selectedRequirementId = testCase.getAnforderung().getId();
+        this.title = testCase.getTitle();
+        this.description = testCase.getDescription();
+        this.prerequisites = testCase.getPrerequisites();
+        this.expectedResult = testCase.getExpectedResult();
+        this.selectedRequirementId = testCase.getRequirement().getId();
     }
 
     public void deleteTestCase(TestCase testCase) {
@@ -56,20 +56,20 @@ public class TestCaseBean implements Serializable {
     public List<SelectItem> getRequirementOptions() {
         List<Requirement> requirements = requirementService.getAllRequirements();
         return requirements.stream()
-                .map(r -> new SelectItem(r.getId(), r.getTitel()))
+                .map(r -> new SelectItem(r.getId(), r.getTitle()))
                 .collect(Collectors.toList());
     }
 
     private void clearFields() {
         id = null;
-        titel = "";
-        beschreibung = "";
-        voraussetzungen = "";
-        erwartetesResultat = "";
+        title = "";
+        description = "";
+        prerequisites = "";
+        expectedResult = "";
         selectedRequirementId = null;
     }
 
-    // Getter und Setter für alle Felder
+    // Getters and Setters for all fields
     public Long getId() {
         return id;
     }
@@ -78,36 +78,36 @@ public class TestCaseBean implements Serializable {
         this.id = id;
     }
 
-    public String getTitel() {
-        return titel;
+    public String getTitle() {
+        return title;
     }
 
-    public void setTitel(String titel) {
-        this.titel = titel;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public String getBeschreibung() {
-        return beschreibung;
+    public String getDescription() {
+        return description;
     }
 
-    public void setBeschreibung(String beschreibung) {
-        this.beschreibung = beschreibung;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public String getVoraussetzungen() {
-        return voraussetzungen;
+    public String getPrerequisites() {
+        return prerequisites;
     }
 
-    public void setVoraussetzungen(String voraussetzungen) {
-        this.voraussetzungen = voraussetzungen;
+    public void setPrerequisites(String prerequisites) {
+        this.prerequisites = prerequisites;
     }
 
-    public String getErwartetesResultat() {
-        return erwartetesResultat;
+    public String getExpectedResult() {
+        return expectedResult;
     }
 
-    public void setErwartetesResultat(String erwartetesResultat) {
-        this.erwartetesResultat = erwartetesResultat;
+    public void setExpectedResult(String expectedResult) {
+        this.expectedResult = expectedResult;
     }
 
     public Long getSelectedRequirementId() {

@@ -52,8 +52,8 @@ public class RequirementServiceImpl implements RequirementService {
     }
 
     @Override
-    public List<Requirement> getRequirementsByPriority(Requirement.Prioritaet priority) {
-        return em.createQuery("SELECT r FROM Requirement r WHERE r.prioritaet = :priority", Requirement.class)
+    public List<Requirement> getRequirementsByPriority(Requirement.Priority priority) {
+        return em.createQuery("SELECT r FROM Requirement r WHERE r.priority = :priority", Requirement.class)
                 .setParameter("priority", priority)
                 .getResultList();
     }

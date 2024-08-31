@@ -25,9 +25,9 @@ public class RequirementBean implements Serializable {
     private RequirementService requirementService;
 
     private Long id;
-    private String titel;
-    private String beschreibung;
-    private Requirement.Prioritaet prioritaet;
+    private String title;
+    private String description;
+    private Requirement.Priority priority;
     private Requirement.Status status;
     private LazyDataModel<Requirement> lazyModel;
 
@@ -51,15 +51,15 @@ public class RequirementBean implements Serializable {
     public void saveOrUpdateRequirement() {
         if (id == null) {
             // This is a new requirement
-            Requirement newRequirement = new Requirement(titel, beschreibung, prioritaet, status);
+            Requirement newRequirement = new Requirement(title, description, priority, status);
             requirementService.createRequirement(newRequirement);
         } else {
             // This is an existing requirement that needs to be updated
             Requirement existingRequirement = requirementService.getRequirement(id);
             if (existingRequirement != null) {
-                existingRequirement.setTitel(titel);
-                existingRequirement.setBeschreibung(beschreibung);
-                existingRequirement.setPrioritaet(prioritaet);
+                existingRequirement.setTitle(title);
+                existingRequirement.setDescription(description);
+                existingRequirement.setPriority(priority);
                 existingRequirement.setStatus(status);
                 requirementService.updateRequirement(existingRequirement);
             }
@@ -73,17 +73,17 @@ public class RequirementBean implements Serializable {
 
     public void clearFields() {
         id = null;
-        titel = "";
-        beschreibung = "";
-        prioritaet = null;
+        title = "";
+        description = "";
+        priority = null;
         status = null;
     }
 
     public void editRequirement(Requirement requirement) {
         this.id = requirement.getId();
-        this.titel = requirement.getTitel();
-        this.beschreibung = requirement.getBeschreibung();
-        this.prioritaet = requirement.getPrioritaet();
+        this.title = requirement.getTitle();
+        this.description = requirement.getDescription();
+        this.priority = requirement.getPriority();
         this.status = requirement.getStatus();
     }
 
@@ -92,7 +92,7 @@ public class RequirementBean implements Serializable {
     }
 
     public List<SelectItem> getPriorityOptions() {
-        return Arrays.stream(Requirement.Prioritaet.values())
+        return Arrays.stream(Requirement.Priority.values())
                 .map(p -> new SelectItem(p, p.name()))
                 .collect(Collectors.toList());
     }
@@ -112,28 +112,28 @@ public class RequirementBean implements Serializable {
         this.id = id;
     }
 
-    public String getTitel() {
-        return titel;
+    public String getTitle() {
+        return title;
     }
 
-    public void setTitel(String titel) {
-        this.titel = titel;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public String getBeschreibung() {
-        return beschreibung;
+    public String getDescription() {
+        return description;
     }
 
-    public void setBeschreibung(String beschreibung) {
-        this.beschreibung = beschreibung;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public Requirement.Prioritaet getPrioritaet() {
-        return prioritaet;
+    public Requirement.Priority getPriority() {
+        return priority;
     }
 
-    public void setPrioritaet(Requirement.Prioritaet prioritaet) {
-        this.prioritaet = prioritaet;
+    public void setPriority(Requirement.Priority priority) {
+        this.priority = priority;
     }
 
     public Requirement.Status getStatus() {

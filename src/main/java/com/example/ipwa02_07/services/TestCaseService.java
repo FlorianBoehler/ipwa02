@@ -40,7 +40,7 @@ public class TestCaseService {
     }
 
     public List<TestCase> getTestCasesByRequirement(Long requirementId) {
-        return em.createQuery("SELECT t FROM TestCase t WHERE t.anforderung.id = :requirementId", TestCase.class)
+        return em.createQuery("SELECT t FROM TestCase t WHERE t.requirement.id = :requirementId", TestCase.class)
                 .setParameter("requirementId", requirementId)
                 .getResultList();
     }

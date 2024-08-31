@@ -18,16 +18,16 @@
 
             <h:panelGrid columns="2" cellpadding="5">
                 <p:outputLabel for="title" value="Title:" />
-                <p:inputText id="title" value="#{testCaseBean.titel}" required="true" maxlength="100" />
+                <p:inputText id="title" value="#{testCaseBean.title}" required="true" maxlength="100" />
 
                 <p:outputLabel for="description" value="Description:" />
-                <p:inputTextarea id="description" value="#{testCaseBean.beschreibung}" required="true" rows="3" cols="50" />
+                <p:inputTextarea id="description" value="#{testCaseBean.description}" required="true" rows="3" cols="50" />
 
                 <p:outputLabel for="preconditions" value="Preconditions:" />
-                <p:inputTextarea id="preconditions" value="#{testCaseBean.voraussetzungen}" rows="3" cols="50" />
+                <p:inputTextarea id="preconditions" value="#{testCaseBean.prerequisites}" rows="3" cols="50" />
 
                 <p:outputLabel for="expectedResult" value="Expected Result:" />
-                <p:inputTextarea id="expectedResult" value="#{testCaseBean.erwartetesResultat}" required="true" rows="3" cols="50" />
+                <p:inputTextarea id="expectedResult" value="#{testCaseBean.expectedResult}" required="true" rows="3" cols="50" />
 
                 <p:outputLabel for="requirement" value="Requirement:" />
                 <p:selectOneMenu id="requirement" value="#{testCaseBean.selectedRequirementId}" required="true">
@@ -51,20 +51,20 @@
             <h:outputText value="#{testCase.id}" />
         </p:column>
 
-        <p:column headerText="Title" sortBy="#{testCase.titel}" filterBy="#{testCase.titel}">
-            <h:outputText value="#{testCase.titel}" />
+        <p:column headerText="Title" sortBy="#{testCase.title}" filterBy="#{testCase.title}">
+            <h:outputText value="#{testCase.title}" />
         </p:column>
 
         <p:column headerText="Description">
-            <h:outputText value="#{testCase.beschreibung}" />
+            <h:outputText value="#{testCase.description}" />
         </p:column>
 
         <p:column headerText="Expected Result">
-            <h:outputText value="#{testCase.erwartetesResultat}" />
+            <h:outputText value="#{testCase.expectedResult}" />
         </p:column>
 
-        <p:column headerText="Requirement" sortBy="#{testCase.anforderung.titel}" filterBy="#{testCase.anforderung.titel}">
-            <h:outputText value="#{testCase.anforderung.titel}" />
+        <p:column headerText="Requirement" sortBy="#{testCase.requirement.title}" filterBy="#{testCase.requirement.title}">
+            <h:outputText value="#{testCase.requirement.title}" />
         </p:column>
 
         <p:column headerText="Actions">
