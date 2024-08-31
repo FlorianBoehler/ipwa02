@@ -12,12 +12,12 @@
     <ui:include src="/WEB-INF/templates/menubar.xhtml" />
     <h:form id="testRunForm">
         <p:panel header="Create/Edit Test Run">
-            <p:panelGrid columns="2">
+            <p:panelGrid columns="2" cellpadding="5">
                 <p:outputLabel for="name" value="Name:"/>
                 <p:inputText id="name" value="#{testRunBean.testRun.name}" required="true" maxlength="100"/>
 
                 <p:outputLabel for="description" value="Description:"/>
-                <p:inputTextarea id="description" value="#{testRunBean.testRun.description}" rows="3"/>
+                <p:inputTextarea id="description" value="#{testRunBean.testRun.description}" rows="3" cols="50"/>
 
                 <p:outputLabel for="startDate" value="Start Date:"/>
                 <p:datePicker id="startDate" value="#{testRunBean.testRun.startDate}" required="true" pattern="yyyy-MM-dd"/>
