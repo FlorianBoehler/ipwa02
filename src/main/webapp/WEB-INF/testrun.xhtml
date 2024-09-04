@@ -8,6 +8,9 @@
 <h:head>
     <title>Test Run Management</title>
 </h:head>
+<f:metadata>
+    <f:viewAction action="#{testRunBean.refreshTestCases}" />
+</f:metadata>
 <h:body>
     <h:messages globalOnly="true" />
     <ui:include src="/WEB-INF/templates/menubar.xhtml"/>

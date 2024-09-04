@@ -45,6 +45,10 @@ public class TestRunBean implements Serializable {
         availableTestCases = testCaseService.getAllTestCases();
     }
 
+    public void refreshTestCases() {
+        loadAvailableTestCases();
+    }
+
     public String saveTestRun() {
         if (testRun.getId() == null) {
             // This is a new TestRun
