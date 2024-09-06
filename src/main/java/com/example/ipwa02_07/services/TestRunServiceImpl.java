@@ -3,6 +3,8 @@ package com.example.ipwa02_07.services;
 import com.example.ipwa02_07.entities.TestCase;
 import com.example.ipwa02_07.entities.TestRun;
 import com.example.ipwa02_07.entities.TestRunTestCase;
+import com.example.ipwa02_07.entities.User;
+import com.example.ipwa02_07.entities.TestRunUser;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -100,4 +102,73 @@ public class TestRunServiceImpl implements TestRunService {
 
         return testRun;
     }
+
+    @Override
+    public TestRun getTestRunWithTestCasesAndUsers(Long id) {
+        return entityManager.createQuery(
+                        "SELECT DISTINCT tr FROM TestRun tr " +
+                                "LEFT JOIN FETCH tr.testRunTestCases " +
+                                "LEFT JOIN FETCH tr.testRunUsers " +
+                                "WHERE tr.id = :id", TestRun.class)
+                .setParameter("id", id)
+                .getSingleResult();
+    }
+
+    @Override
+    @Transactional
+    public TestRun addUserToTestRun(Long testRunId, Long userId) {
+        TestRun testRun = entityManager.find(TestRun.class, testRunId);
+        if (testRun == null) {
+            return null;
+        }
+
+        User user = entityManager.find(User.class, userId);
+        if (user == null) {
+            return testRun;
+        }
+
+        // Check if the association already exists
+        boolean associationExists = testRun.getTestRunUsers().stream()
+                .anyMatch(tru -> tru.getUser().getId().equals(userId));
+
+        if (!associationExists) {
+            TestRunUser testRunUser = new TestRunUser(testRun, user);
+            testRun.getTestRunUsers().add(testRunUser);
+            user.getTestRunUsers().add(testRunUser);
+            entityManager.persist(testRunUser);
+        }
+
+        return testRun;
+    }
+
+    @Override
+    @Transactional
+    public TestRun removeUserFromTestRun(Long testRunId, Long userId) {
+        TestRun testRun = entityManager.find(TestRun.class, testRunId);
+        if (testRun == null) {
+            return null;
+        }
+
+        TestRunUser testRunUserToRemove = testRun.getTestRunUsers().stream()
+                .filter(tru -> tru.getUser().getId().equals(userId))
+                .findFirst()
+                .orElse(null);
+
+        if (testRunUserToRemove != null) {
+            testRun.getTestRunUsers().remove(testRunUserToRemove);
+            testRunUserToRemove.getUser().getTestRunUsers().remove(testRunUserToRemove);
+            entityManager.remove(testRunUserToRemove);
+        }
+
+        return testRun;
+    }
+
+    @Override
+    public List<User> getUsersForTestRun(Long testRunId) {
+        return entityManager.createQuery(
+                        "SELECT u FROM User u JOIN u.testRunUsers tru WHERE tru.testRun.id = :testRunId", User.class)
+                .setParameter("testRunId", testRunId)
+                .getResultList();
+    }
+
 }

@@ -5,11 +5,11 @@ import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
-@Table(name = "test_run_user")
+@Table(name = "test_run_users")
 public class TestRunUser implements Serializable {
 
     @EmbeddedId
-    private TestRunTestCaseId id = new TestRunTestCaseId();
+    private TestRunUserId id = new TestRunUserId();
 
     @ManyToOne
     @MapsId("testRunId")
@@ -18,8 +18,8 @@ public class TestRunUser implements Serializable {
 
     @ManyToOne
     @MapsId("userId")
-    @JoinColumn(name = "id")
-    private TestCase testCase;
+    @JoinColumn(name = "user_id")
+    private User user;
 
     // Constructors, Getters, Setters
     public TestRunUser() {}
@@ -27,7 +27,7 @@ public class TestRunUser implements Serializable {
     public TestRunUser(TestRun testRun, User user) {
         this.testRun = testRun;
         this.user = user;
-        this.id = new TestRunUser(testRun.getId(), user.getId());
+        this.id = new TestRunUserId(testRun.getId(), user.getId());
     }
 
     // Getters and setters
@@ -47,19 +47,19 @@ public class TestRunUser implements Serializable {
         this.testRun = testRun;
     }
 
-    public TestCase getTestCase() {
-        return testCase;
+    public User getUser() {
+        return user;
     }
 
-    public void setTestCase(TestCase testCase) {
-        this.testCase = testCase;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof TestRunTestCase)) return false;
-        TestRunTestCase that = (TestRunTestCase) o;
+        if (!(o instanceof TestRunUser)) return false;
+        TestRunUser that = (TestRunUser) o;
         return Objects.equals(getId(), that.getId());
     }
 

@@ -34,6 +34,9 @@ public class TestRun implements Serializable {
     @OneToMany(mappedBy = "testRun", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private Set<TestRunTestCase> testRunTestCases = new HashSet<>();
 
+    @OneToMany(mappedBy = "testRun", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private Set<TestRunUser> testRunUsers = new HashSet<>();
+
     public TestRun() {}
 
     // Enum for Test Run Status
@@ -117,6 +120,35 @@ public class TestRun implements Serializable {
                 testCase.getTestRunTestCases().remove(testRunTestCase);
                 testRunTestCase.setTestRun(null);
                 testRunTestCase.setTestCase(null);
+            }
+        }
+    }
+
+    public Set<TestRunUser> getTestRunUsers() {
+        return testRunUsers;
+    }
+
+    public void setTestRunUsers(Set<TestRunUser> testRunUsers) {
+        this.testRunUsers = testRunUsers;
+    }
+
+    public void addTestRunUser(User user) {
+        TestRunUser testRunUser = new TestRunUser(this, user);
+        if (!testRunUsers.contains(testRunUser)) {
+            testRunUsers.add(testRunUser);
+            user.getTestRunUsers().add(testRunUser);
+        }
+    }
+
+    public void removeTestRunUser(User user) {
+        for (Iterator<TestRunUser> iterator = testRunUsers.iterator(); iterator.hasNext(); ) {
+            TestRunUser testRunUser = iterator.next();
+            if (testRunUser.getTestRun().equals(this) &&
+                    testRunUser.getUser().equals(user)) {
+                iterator.remove();
+                user.getTestRunUsers().remove(testRunUser);
+                testRunUser.setTestRun(null);
+                testRunUser.setUser(null);
             }
         }
     }

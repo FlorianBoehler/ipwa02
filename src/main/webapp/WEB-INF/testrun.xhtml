@@ -83,6 +83,62 @@
                 </p:column>
             </p:dataTable>
         </p:panel>
+
+        <!-- Section for available users -->
+        <p:panel header="Available Users">
+            <p:dataTable id="availableUserList" value="#{testRunBean.availableUsers}" var="user"
+                         paginator="true" rows="10"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15">
+                <f:facet name="header">
+                    Available Users
+                </f:facet>
+
+                <p:column headerText="Username" sortBy="#{user.username}" filterBy="#{user.username}">
+                    <h:outputText value="#{user.username}"/>
+                </p:column>
+
+                <p:column headerText="Role" sortBy="#{user.role}" filterBy="#{user.role}">
+                    <h:outputText value="#{user.role}"/>
+                </p:column>
+
+                <p:column headerText="Actions">
+                    <p:commandButton value="Add to Test Run" action="#{testRunBean.addUserToTestRun(user)}" update=":testRunForm:testRunUserList"/>
+                </p:column>
+            </p:dataTable>
+        </p:panel>
+
+        <!-- Section for displaying selected users in testrun -->
+        <p:panel header="Users in This Run">
+            <p:dataTable id="testRunUserList"
+                         value="#{testRunBean.testRun.id == null ? testRunBean.selectedUsers : testRunBean.testRun.testRunUsers}"
+                         var="userOrTestRunUser"
+                         paginator="true" rows="10"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15">
+                <f:facet name="header">
+                    Selected Users for Test Run
+                </f:facet>
+
+                <p:column headerText="Username"
+                          sortBy="#{testRunBean.testRun.id == null ? userOrTestRunUser.username : userOrTestRunUser.user.username}"
+                          filterBy="#{testRunBean.testRun.id == null ? userOrTestRunUser.username : userOrTestRunUser.user.username}">
+                    <h:outputText value="#{testRunBean.testRun.id == null ? userOrTestRunUser.username : userOrTestRunUser.user.username}"/>
+                </p:column>
+
+                <p:column headerText="Role"
+                          sortBy="#{testRunBean.testRun.id == null ? userOrTestRunUser.role : userOrTestRunUser.user.role}"
+                          filterBy="#{testRunBean.testRun.id == null ? userOrTestRunUser.role : userOrTestRunUser.user.role}">
+                    <h:outputText value="#{testRunBean.testRun.id == null ? userOrTestRunUser.role : userOrTestRunUser.user.role}"/>
+                </p:column>
+
+                <p:column headerText="Actions">
+                    <p:commandButton value="Remove"
+                                     action="#{testRunBean.removeUserFromTestRun(testRunBean.testRun.id == null ? userOrTestRunUser : userOrTestRunUser.user)}"
+                                     update=":testRunForm:testRunUserList"/>
+                </p:column>
+            </p:dataTable>
+        </p:panel>
     </h:form>
 
     <p:dataTable id="testRunList" value="#{testRunBean.testRuns}" var="testRun"
