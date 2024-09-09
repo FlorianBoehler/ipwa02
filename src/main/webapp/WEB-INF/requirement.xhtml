@@ -10,12 +10,13 @@
 </h:head>
 <h:body>
    <ui:include src="/WEB-INF/templates/menubar.xhtml" />
-   <h:form id="requirementForm">
-      <p:panel header="Create/Edit Requirements">
-         <p:messages id="messages" showDetail="true" closable="true">
-            <p:autoUpdate />
-         </p:messages>
 
+   <h:form id="mainForm">
+      <p:messages id="messages" showDetail="true" closable="true">
+         <p:autoUpdate />
+      </p:messages>
+
+      <p:panel header="Create/Edit Requirements">
          <h:panelGrid columns="2" cellpadding="5">
             <p:outputLabel for="title" value="Title:" />
             <p:inputText id="title" value="#{requirementBean.title}" required="true" maxlength="100" />
@@ -36,47 +37,66 @@
             </p:selectOneMenu>
          </h:panelGrid>
 
-         <p:commandButton value="Save" action="#{requirementBean.saveOrUpdateRequirement}" update="requirementForm:messages requirementTable requirementForm" />
-         <p:commandButton value="Clear" action="#{requirementBean.clearFields}" update="requirementForm:messages requirementTable requirementForm" />
+         <p:commandButton value="Save" action="#{requirementBean.saveOrUpdateRequirement}" update="messages requirementTable mainForm" />
+         <p:commandButton value="Clear" action="#{requirementBean.clearFields}" update="messages requirementTable mainForm" />
       </p:panel>
+
+      <p:dataTable id="requirementTable" var="requirement" value="#{requirementBean.lazyModel}"
+                   paginator="true" rows="10" paginatorPosition="bottom"
+                   lazy="true" sortMode="multiple"
+                   widgetVar="requirementTableWidget"
+                   emptyMessage="No requirements found with given criteria"
+                   filterEvent="enter"
+                   filterDelay="500">
+
+         <f:facet name="header">
+            <div class="p-d-flex p-jc-between">
+               <span>Requirements List</span>
+            </div>
+         </f:facet>
+
+         <p:column headerText="ID" sortBy="#{requirement.customId}" filterBy="#{requirement.customId}" filterMatchMode="contains">
+            <h:outputText value="#{requirement.customId}" />
+         </p:column>
+
+         <p:column headerText="Title" sortBy="#{requirement.title}" filterBy="#{requirement.title}" filterMatchMode="contains">
+            <h:outputText value="#{requirement.title}" />
+         </p:column>
+
+         <p:column headerText="Description" sortBy="#{requirement.description}" filterBy="#{requirement.description}" filterMatchMode="contains">
+            <h:outputText value="#{requirement.description}" />
+         </p:column>
+
+         <p:column headerText="Priority" sortBy="#{requirement.priority}" filterBy="#{requirement.priority}" filterMatchMode="equals">
+            <f:facet name="filter">
+               <p:selectOneMenu onchange="PF('requirementTableWidget').filter()" styleClass="ui-custom-filter">
+                  <f:selectItem itemLabel="All" itemValue="#{null}" noSelectionOption="true" />
+                  <f:selectItems value="#{requirementBean.priorityOptions}" />
+               </p:selectOneMenu>
+            </f:facet>
+            <h:outputText value="#{requirement.priority}" />
+         </p:column>
+
+         <p:column headerText="Status" sortBy="#{requirement.status}" filterBy="#{requirement.status}" filterMatchMode="equals">
+            <f:facet name="filter">
+               <p:selectOneMenu onchange="PF('requirementTableWidget').filter()" styleClass="ui-custom-filter">
+                  <f:selectItem itemLabel="All" itemValue="#{null}" noSelectionOption="true" />
+                  <f:selectItems value="#{requirementBean.statusOptions}" />
+               </p:selectOneMenu>
+            </f:facet>
+            <h:outputText value="#{requirement.status}" />
+         </p:column>
+
+         <p:column headerText="Actions">
+            <p:commandButton icon="pi pi-pencil" action="#{requirementBean.editRequirement(requirement)}"
+                             update="mainForm" />
+            <p:commandButton icon="pi pi-trash" action="#{requirementBean.deleteRequirement(requirement)}"
+                             update="requirementTable" >
+               <p:confirm header="Confirmation" message="Are you sure you want to delete this requirement?" icon="pi pi-exclamation-triangle" />
+            </p:commandButton>
+         </p:column>
+      </p:dataTable>
    </h:form>
-
-   <p:dataTable id="requirementTable" var="requirement" value="#{requirementBean.lazyModel}"
-                paginator="true" rows="10" paginatorPosition="bottom"
-                lazy="true" sortMode="multiple" filterMode="server">
-      <f:facet name="header">
-         Requirements List
-      </f:facet>
-
-      <p:column headerText="ID" sortBy="#{requirement.id}" filterBy="#{requirement.id}">
-         <h:outputText value="#{requirement.id}" />
-      </p:column>
-
-      <p:column headerText="Title" sortBy="#{requirement.title}" filterBy="#{requirement.title}">
-         <h:outputText value="#{requirement.title}" />
-      </p:column>
-
-      <p:column headerText="Description" sortBy="#{requirement.description}" filterBy="#{requirement.description}">
-         <h:outputText value="#{requirement.description}" />
-      </p:column>
-
-      <p:column headerText="Priority" sortBy="#{requirement.priority}" filterBy="#{requirement.priority}">
-         <h:outputText value="#{requirement.priority}" />
-      </p:column>
-
-      <p:column headerText="Status" sortBy="#{requirement.status}" filterBy="#{requirement.status}">
-         <h:outputText value="#{requirement.status}" />
-      </p:column>
-
-      <p:column headerText="Actions">
-         <p:commandButton icon="pi pi-pencil" action="#{requirementBean.editRequirement(requirement)}"
-                          update="requirementForm" />
-         <p:commandButton icon="pi pi-trash" action="#{requirementBean.deleteRequirement(requirement)}"
-                          update="requirementTable" >
-            <p:confirm header="Confirmation" message="Are you sure you want to delete this requirement?" icon="pi pi-exclamation-triangle" />
-         </p:commandButton>
-      </p:column>
-   </p:dataTable>
 
    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
       <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />

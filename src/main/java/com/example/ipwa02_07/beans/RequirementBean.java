@@ -9,12 +9,13 @@ import jakarta.faces.model.SelectItem;
 import org.primefaces.model.FilterMeta;
 import org.primefaces.model.SortMeta;
 import org.primefaces.model.LazyDataModel;
-import org.primefaces.model.SortOrder;
+import org.primefaces.util.LangUtils;
 
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 @Named
@@ -30,6 +31,7 @@ public class RequirementBean implements Serializable {
     private Requirement.Priority priority;
     private Requirement.Status status;
     private LazyDataModel<Requirement> lazyModel;
+    private boolean globalFilterOnly = false;
 
     public LazyDataModel<Requirement> getLazyModel() {
         if (lazyModel == null) {
@@ -41,7 +43,7 @@ public class RequirementBean implements Serializable {
 
                 @Override
                 public int count(Map<String, FilterMeta> filterBy) {
-                    return requirementService.countRequirements();
+                    return requirementService.countRequirements(filterBy);
                 }
             };
         }
@@ -79,6 +81,7 @@ public class RequirementBean implements Serializable {
         status = null;
     }
 
+
     public void editRequirement(Requirement requirement) {
         this.id = requirement.getId();
         this.title = requirement.getTitle();
@@ -103,7 +106,9 @@ public class RequirementBean implements Serializable {
                 .collect(Collectors.toList());
     }
 
-    // Getter and Setter
+
+
+    // Getter and Setter methods
     public Long getId() {
         return id;
     }
@@ -142,5 +147,13 @@ public class RequirementBean implements Serializable {
 
     public void setStatus(Requirement.Status status) {
         this.status = status;
+    }
+
+    public boolean isGlobalFilterOnly() {
+        return globalFilterOnly;
+    }
+
+    public void setGlobalFilterOnly(boolean globalFilterOnly) {
+        this.globalFilterOnly = globalFilterOnly;
     }
 }

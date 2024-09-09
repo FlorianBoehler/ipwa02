@@ -6,12 +6,15 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "testcases")
+@Table(name = "test_cases")
 public class TestCase implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "custom_id", unique = true, nullable = false)
+    private String customId;
 
     @Column(nullable = false, length = 100)
     private String title;
@@ -55,6 +58,14 @@ public class TestCase implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getCustomId() {
+        return customId;
+    }
+
+    public void setCustomId(String customId) {
+        this.customId = customId;
     }
 
     public String getTitle() {

@@ -15,6 +15,9 @@ public class TestRun implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "custom_id", unique = true, nullable = false)
+    private String customId;
+
     @Column(nullable = false, length = 100)
     private String name;
 
@@ -53,6 +56,14 @@ public class TestRun implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getCustomId() {
+        return customId;
+    }
+
+    public void setCustomId(String customId) {
+        this.customId = customId;
     }
 
     public String getName() {

@@ -14,6 +14,9 @@ public class Requirement implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "custom_id", unique = true, nullable = false)
+    private String customId;
+
     @Column(nullable = false)
     private String title;
 
@@ -51,6 +54,14 @@ public class Requirement implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getCustomId() {
+        return customId;
+    }
+
+    public void setCustomId(String customId) {
+        this.customId = customId;
     }
 
     public String getTitle() {
@@ -121,11 +132,13 @@ public class Requirement implements Serializable {
         NEW, IN_PROGRESS, COMPLETED
     }
 
+
     // Optional: toString method for easier debugging
     @Override
     public String toString() {
         return "Requirement{" +
                 "id=" + id +
+                ", customId='" + customId + '\'' +
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", priority=" + priority +
