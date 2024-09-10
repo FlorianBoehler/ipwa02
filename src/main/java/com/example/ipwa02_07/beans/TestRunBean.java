@@ -1,7 +1,6 @@
 package com.example.ipwa02_07.beans;
 
 import com.example.ipwa02_07.entities.TestRun;
-import com.example.ipwa02_07.entities.TestRun.TestRunStatus;
 import com.example.ipwa02_07.entities.TestCase;
 import com.example.ipwa02_07.entities.User;
 import com.example.ipwa02_07.services.TestRunService;

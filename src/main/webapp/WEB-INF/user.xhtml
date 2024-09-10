@@ -10,7 +10,11 @@
     <title>User Management</title>
 </h:head>
 
-<h:body rendered="#{loginBean.hasRole('ADMIN')}">
+<f:metadata>
+    <f:viewAction action="#{pageAccessBean.checkAccess('user.xhtml')}" />
+</f:metadata>
+
+<h:body rendered="#{pageAccessBean.hasAccessToPage('user.xhtml')}">
     <ui:include src="/WEB-INF/templates/menubar.xhtml" />
     <h1>User Management</h1>
 

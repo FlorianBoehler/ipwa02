@@ -10,19 +10,19 @@
                     <p:menuitem value="Dashboard" url="dashboard.xhtml" />
 
                     <p:menuitem value="Requirements" url="requirement.xhtml"
-                                rendered="#{loginBean.hasRole('ADMIN') or loginBean.hasRole('REQUIREMENTS_ENGINEER')}" />
+                                rendered="#{pageAccessBean.shouldRenderMenuItem('requirement.xhtml')}" />
 
                     <p:menuitem value="Test Cases" url="testcase.xhtml"
-                                rendered="#{loginBean.hasRole('ADMIN') or loginBean.hasRole('TEST_MANAGER') or loginBean.hasRole('TEST_CREATOR')}" />
+                                rendered="#{pageAccessBean.shouldRenderMenuItem('testcase.xhtml')}" />
 
                     <p:menuitem value="Test Runs" url="testrun.xhtml"
-                                rendered="#{loginBean.hasRole('ADMIN') or loginBean.hasRole('TEST_MANAGER')}" />
+                                rendered="#{pageAccessBean.shouldRenderMenuItem('testrun.xhtml')}" />
 
                     <p:menuitem value="Test Results" url="testresult.xhtml"
-                                rendered="#{loginBean.hasRole('ADMIN') or loginBean.hasRole('TEST_MANAGER') or loginBean.hasRole('TESTER')}" />
+                                rendered="#{pageAccessBean.shouldRenderMenuItem('testresult.xhtml')}" />
 
                     <p:menuitem value="Admin Section" url="user.xhtml"
-                                rendered="#{loginBean.hasRole('ADMIN')}" />
+                                rendered="#{pageAccessBean.shouldRenderMenuItem('user.xhtml')}" />
                 </p:submenu>
                 <f:facet name="options">
                     <p:outputLabel value="Welcome, #{loginBean.username}!    " styleClass="mr-2" />

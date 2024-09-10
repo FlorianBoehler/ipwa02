@@ -8,7 +8,12 @@
 <h:head>
     <title>Test Case Management</title>
 </h:head>
-<h:body>
+
+<f:metadata>
+    <f:viewAction action="#{pageAccessBean.checkAccess('testcase.xhtml')}" />
+</f:metadata>
+
+<h:body rendered="#{pageAccessBean.hasAccessToPage('testcase.xhtml')}">
     <ui:include src="/WEB-INF/templates/menubar.xhtml" />
     <h:form id="testCaseForm">
         <p:panel header="Create/Edit Test Case">
@@ -36,6 +41,12 @@
                     <f:selectItem itemLabel="Select Requirement" itemValue="" />
                     <f:selectItems value="#{testCaseBean.requirementOptions}" />
                 </p:selectOneMenu>
+
+                <p:outputLabel for="assignedUser" value="Assigned User:" />
+                <p:selectOneMenu id="assignedUser" value="#{testCaseBean.selectedUserId}">
+                    <f:selectItem itemLabel="Select User" itemValue="" />
+                    <f:selectItems value="#{testCaseBean.userOptions}" />
+                </p:selectOneMenu>
             </h:panelGrid>
 
             <p:commandButton value="Save" action="#{testCaseBean.saveOrUpdateTestCase}" update="testCaseForm:messages testCaseTable testCaseForm" />
@@ -43,10 +54,11 @@
         </p:panel>
     </h:form>
 
-    <p:dataTable id="testCaseTable" var="testCase" value="#{testCaseBean.allTestCasesSorted}"
-                 paginator="true" rows="10" paginatorPosition="bottom">
-        sortBy="#{testCaseBean.sortBy}" sortMode="multiple"
-        widgetVar="testCaseTableWidget">
+    <p:dataTable id="testCaseTable" var="testCase" value="#{testCaseBean.testCases}"
+                 paginator="true" rows="10" paginatorPosition="bottom"
+                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                 rowsPerPageTemplate="5,10,15">
+
         <f:facet name="header">
             Test Cases List
         </f:facet>
@@ -69,6 +81,10 @@
 
         <p:column headerText="Requirement" sortBy="#{testCase.requirement.title}">
             <h:outputText value="#{testCase.requirement.title}" />
+        </p:column>
+
+        <p:column headerText="Assigned Tester" sortBy="#{testCase.assignedUser.username}">
+            <h:outputText value="#{testCase.assignedUser.username}" />
         </p:column>
 
         <p:column headerText="Actions">

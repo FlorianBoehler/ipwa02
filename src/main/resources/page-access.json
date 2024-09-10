@@ -1,0 +1,8 @@
+{
+  "dashboard.xhtml": ["ALL"],
+  "requirement.xhtml": ["ADMIN", "REQUIREMENTS_ENGINEER"],
+  "testcase.xhtml": ["ADMIN", "TEST_MANAGER", "TEST_CREATOR"],
+  "testrun.xhtml": ["ADMIN", "TEST_MANAGER"],
+  "testresult.xhtml": ["ADMIN", "TEST_MANAGER", "TESTER"],
+  "user.xhtml": ["ADMIN"]
+}

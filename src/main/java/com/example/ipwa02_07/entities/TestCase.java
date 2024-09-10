@@ -120,7 +120,4 @@ public class TestCase implements Serializable {
         return testRunTestCases;
     }
 
-    public void setTestRunTestCases(Set<TestRunTestCase> testRunTestCases) {
-        this.testRunTestCases = testRunTestCases;
-    }
 }

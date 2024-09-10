@@ -8,7 +8,12 @@
 <h:head>
     <title>Test Result Management</title>
 </h:head>
-<h:body>
+
+<f:metadata>
+    <f:viewAction action="#{pageAccessBean.checkAccess('testresult.xhtml')}" />
+</f:metadata>
+
+<h:body rendered="#{pageAccessBean.hasAccessToPage('testresult.xhtml')}">
     <ui:include src="/WEB-INF/templates/menubar.xhtml" />
     <h:form id="testResultForm">
         <p:panel header="Create/Edit Test Results">

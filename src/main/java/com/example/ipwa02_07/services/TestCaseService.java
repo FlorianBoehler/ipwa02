@@ -12,5 +12,4 @@ public interface TestCaseService {
     List<TestCase> getAllTestCases();
     void updateTestCase(TestCase testCase);
     void deleteTestCase(Long id);
-    List<TestCase> getAllTestCasesSorted(Map<String, SortMeta> sortBy);
 }

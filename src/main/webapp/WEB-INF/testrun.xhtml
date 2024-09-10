@@ -8,10 +8,12 @@
 <h:head>
     <title>Test Run Management</title>
 </h:head>
+
 <f:metadata>
-    <f:viewAction action="#{testRunBean.refreshTestCases}" />
+    <f:viewAction action="#{pageAccessBean.checkAccess('testrun.xhtml')}" />
 </f:metadata>
-<h:body>
+
+<h:body rendered="#{pageAccessBean.hasAccessToPage('testrun.xhtml')}">
     <h:messages globalOnly="true" />
     <ui:include src="/WEB-INF/templates/menubar.xhtml"/>
     <h:form id="testRunForm">

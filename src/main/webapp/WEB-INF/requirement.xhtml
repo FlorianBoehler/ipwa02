@@ -8,7 +8,12 @@
 <h:head>
    <title>Requirement Management</title>
 </h:head>
-<h:body rendered="#{loginBean.hasRole('ADMIN')}">
+
+<f:metadata>
+   <f:viewAction action="#{pageAccessBean.checkAccess('requirement.xhtml')}" />
+</f:metadata>
+
+<h:body rendered="#{pageAccessBean.hasAccessToPage('requirement.xhtml')}">
    <ui:include src="/WEB-INF/templates/menubar.xhtml" />
 
    <h:form id="mainForm">

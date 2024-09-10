@@ -2,18 +2,19 @@ package com.example.ipwa02_07.beans;
 
 import com.example.ipwa02_07.entities.TestCase;
 import com.example.ipwa02_07.entities.Requirement;
+import com.example.ipwa02_07.entities.User;
+import com.example.ipwa02_07.entities.User.UserRole;
 import com.example.ipwa02_07.services.TestCaseService;
 import com.example.ipwa02_07.services.RequirementService;
+import com.example.ipwa02_07.services.UserService;
+import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.faces.model.SelectItem;
-import org.primefaces.model.SortMeta;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Named
@@ -26,18 +27,34 @@ public class TestCaseBean implements Serializable {
     @Inject
     private RequirementService requirementService;
 
+    @Inject
+    private UserService userService;
+
     private Long id;
     private String title;
     private String description;
     private String prerequisites;
     private String expectedResult;
     private Long selectedRequirementId;
-    private Map<String, SortMeta> sortBy = new HashMap<>(); // Initialize sortBy
+    private Long selectedUserId;
+    private List<TestCase> testCases;
+
+    @PostConstruct
+    public void init() {
+        loadTestCases();
+    }
+
+    public void loadTestCases() {
+        testCases = testCaseService.getAllTestCases();
+    }
 
     public void saveOrUpdateTestCase() {
         Requirement requirement = requirementService.getRequirement(selectedRequirementId);
+        User assignedUser = selectedUserId != null ? userService.getUserById(selectedUserId) : null;
+
         if (id == null) {
             TestCase newTestCase = new TestCase(title, description, prerequisites, expectedResult, requirement);
+            newTestCase.setAssignedUser(assignedUser);
             testCaseService.createTestCase(newTestCase);
         } else {
             TestCase existingTestCase = testCaseService.getTestCase(id);
@@ -47,21 +64,16 @@ public class TestCaseBean implements Serializable {
                 existingTestCase.setPrerequisites(prerequisites);
                 existingTestCase.setExpectedResult(expectedResult);
                 existingTestCase.setRequirement(requirement);
+                existingTestCase.setAssignedUser(assignedUser);
                 testCaseService.updateTestCase(existingTestCase);
             }
         }
         clearFields();
+        loadTestCases();
     }
 
     public List<TestCase> getAllTestCases() {
-        return testCaseService.getAllTestCases();
-    }
-
-    public List<TestCase> getAllTestCasesSorted() {
-        if (sortBy == null) {
-            sortBy = new HashMap<>(); // Ensure sortBy is not null
-        }
-        return testCaseService.getAllTestCasesSorted(sortBy);
+        return testCases;
     }
 
     public void editTestCase(TestCase testCase) {
@@ -71,10 +83,12 @@ public class TestCaseBean implements Serializable {
         this.prerequisites = testCase.getPrerequisites();
         this.expectedResult = testCase.getExpectedResult();
         this.selectedRequirementId = testCase.getRequirement().getId();
+        this.selectedUserId = testCase.getAssignedUser() != null ? testCase.getAssignedUser().getId() : null;
     }
 
     public void deleteTestCase(TestCase testCase) {
         testCaseService.deleteTestCase(testCase.getId());
+        loadTestCases();
     }
 
     public List<SelectItem> getRequirementOptions() {
@@ -91,6 +105,15 @@ public class TestCaseBean implements Serializable {
         prerequisites = "";
         expectedResult = "";
         selectedRequirementId = null;
+        selectedUserId = null;
+    }
+
+    public List<SelectItem> getUserOptions() {
+        List<User> users = userService.getAllUsers();
+        return users.stream()
+                .filter(user -> user.getRole() == UserRole.TESTER)
+                .map(user -> new SelectItem(user.getId(), user.getUsername()))
+                .collect(Collectors.toList());
     }
 
     // Getters and Setters for all fields
@@ -142,11 +165,19 @@ public class TestCaseBean implements Serializable {
         this.selectedRequirementId = selectedRequirementId;
     }
 
-    public Map<String, SortMeta> getSortBy() {
-        return sortBy;
+    public List<TestCase> getTestCases() {
+        return testCases;
     }
 
-    public void setSortBy(Map<String, SortMeta> sortBy) {
-        this.sortBy = sortBy;
+    public void setTestCases(List<TestCase> testCases) {
+        this.testCases = testCases;
+    }
+
+    public Long getSelectedUserId() {
+        return selectedUserId;
+    }
+
+    public void setSelectedUserId(Long selectedUserId) {
+        this.selectedUserId = selectedUserId;
     }
 }

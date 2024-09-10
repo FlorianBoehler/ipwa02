@@ -29,7 +29,7 @@ public class TestCaseServiceImpl implements TestCaseService {
     public void initializeLastUsedNumber() {
         int currentYear = LocalDateTime.now().getYear();
         TypedQuery<Long> query = em.createQuery(
-                "SELECT MAX(CAST(SUBSTRING(t.customId, 10) AS long)) FROM TestCase t WHERE t.customId LIKE CONCAT('TEST-', :year, '-%')",
+                "SELECT MAX(CAST(SUBSTRING(t.customId, 10) AS long)) FROM TestCase t WHERE t.customId LIKE CONCAT('TCA-', :year, '-%')",
                 Long.class
         );
         query.setParameter("year", currentYear);
@@ -77,18 +77,5 @@ public class TestCaseServiceImpl implements TestCaseService {
         }
     }
 
-    @Override
-    public List<TestCase> getAllTestCasesSorted(Map<String, SortMeta> sortBy) {
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<TestCase> cq = cb.createQuery(TestCase.class);
-        Root<TestCase> root = cq.from(TestCase.class);
-        cq.select(root);
-        List<Order> orders = sortBy.entrySet().stream()
-                .map(e -> e.getValue().getOrder() == SortOrder.ASCENDING
-                        ? cb.asc(root.get(e.getKey()))
-                        : cb.desc(root.get(e.getKey())))
-                .collect(Collectors.toList());
-        cq.orderBy(orders);
-        return em.createQuery(cq).getResultList();
-    }
+
 }
