@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
       xmlns:p="http://primefaces.org/ui">
 
 <h:head>
@@ -11,7 +11,7 @@
 
 <h:body>
    <div class="card">
-      <h:form>
+      <h:form id="loginForm">
          <p:panel header="Login">
             <h:panelGrid columns="2" cellpadding="5">
                <h:outputLabel for="username" value="Username:" />
@@ -27,6 +27,30 @@
             <p:messages showDetail="true" closable="true" />
          </p:panel>
       </h:form>
+
+      <h:form id="createAdminForm" rendered="#{userBean.isFirstUser}">
+         <p:panel header="Create First Admin User">
+            <h:panelGrid columns="3" cellpadding="5">
+               <p:outputLabel for="adminUsername" value="Username:" />
+               <p:inputText id="adminUsername" value="#{userBean.user.username}" required="true" />
+               <p:message for="adminUsername" />
+
+               <p:outputLabel for="adminEmail" value="Email:" />
+               <p:inputText id="adminEmail" value="#{userBean.user.email}" required="true" />
+               <p:message for="adminEmail" />
+
+               <p:outputLabel for="adminPassword" value="Password:" />
+               <p:password id="adminPassword" value="#{userBean.newPassword}" required="true" />
+               <p:message for="adminPassword" />
+
+               <p:outputLabel for="adminConfirmPassword" value="Confirm Password:" />
+               <p:password id="adminConfirmPassword" value="#{userBean.confirmPassword}" required="true" />
+               <p:message for="adminConfirmPassword" />
+            </h:panelGrid>
+
+            <p:commandButton value="Create Admin User" action="#{userBean.createFirstAdminUser}" update="@form :loginForm" />
+         </p:panel>
+      </h:form>
    </div>
    <div class="card">
       <p>You can test the application with the following users:</p>
@@ -34,7 +58,6 @@
          <li>Username: <strong>admin</strong>, Password: <strong>admin</strong></li>
          <li>Username: <strong>test_user</strong>, Password: <strong>1234</strong></li>
       </ul>
-
    </div>
 </h:body>
 </html>

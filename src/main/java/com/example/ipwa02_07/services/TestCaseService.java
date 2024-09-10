@@ -1,7 +1,10 @@
 package com.example.ipwa02_07.services;
 
 import com.example.ipwa02_07.entities.TestCase;
+import org.primefaces.model.SortMeta;
+
 import java.util.List;
+import java.util.Map;
 
 public interface TestCaseService {
     void createTestCase(TestCase testCase);
@@ -9,5 +12,5 @@ public interface TestCaseService {
     List<TestCase> getAllTestCases();
     void updateTestCase(TestCase testCase);
     void deleteTestCase(Long id);
-    List<TestCase> getTestCasesByRequirement(Long requirementId);
+    List<TestCase> getAllTestCasesSorted(Map<String, SortMeta> sortBy);
 }

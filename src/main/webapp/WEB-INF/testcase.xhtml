@@ -43,8 +43,10 @@
         </p:panel>
     </h:form>
 
-    <p:dataTable id="testCaseTable" var="testCase" value="#{testCaseBean.allTestCases}"
+    <p:dataTable id="testCaseTable" var="testCase" value="#{testCaseBean.allTestCasesSorted}"
                  paginator="true" rows="10" paginatorPosition="bottom">
+        sortBy="#{testCaseBean.sortBy}" sortMode="multiple"
+        widgetVar="testCaseTableWidget">
         <f:facet name="header">
             Test Cases List
         </f:facet>
@@ -53,7 +55,7 @@
             <h:outputText value="#{testCase.customId}" />
         </p:column>
 
-        <p:column headerText="Title" sortBy="#{testCase.title}" filterBy="#{testCase.title}">
+        <p:column headerText="Title" sortBy="#{testCase.title}">
             <h:outputText value="#{testCase.title}" />
         </p:column>
 
@@ -65,7 +67,7 @@
             <h:outputText value="#{testCase.expectedResult}" />
         </p:column>
 
-        <p:column headerText="Requirement" sortBy="#{testCase.requirement.title}" filterBy="#{testCase.requirement.title}">
+        <p:column headerText="Requirement" sortBy="#{testCase.requirement.title}">
             <h:outputText value="#{testCase.requirement.title}" />
         </p:column>
 
@@ -73,7 +75,7 @@
             <p:commandButton icon="pi pi-pencil" action="#{testCaseBean.editTestCase(testCase)}"
                              update="testCaseForm" />
             <p:commandButton icon="pi pi-trash" action="#{testCaseBean.deleteTestCase(testCase)}"
-                             update="testCaseTable" >
+                             update="testCaseTable">
                 <p:confirm header="Confirmation" message="Are you sure you want to delete this test case?" icon="pi pi-exclamation-triangle" />
             </p:commandButton>
         </p:column>

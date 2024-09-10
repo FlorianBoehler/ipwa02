@@ -5,6 +5,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.NoResultException;
+import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
 import java.util.List;
 
@@ -16,24 +17,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User authenticate(String username, String password) {
-        try {
-            User user = entityManager.createQuery("SELECT u FROM User u WHERE u.username = :username AND u.active = true", User.class)
-                    .setParameter("username", username)
-                    .getSingleResult();
-
-            if (user != null && user.getPassword().equals(password)) { // In production, use proper password hashing
-                return user;
-            }
-        } catch (NoResultException e) {
-            // User not found or inactive
+        User user = getUserByUsername(username);
+        if (user != null && user.checkPassword(password)) {
+            return user;
         }
         return null;
     }
 
     @Override
     @Transactional
-    public User createUser(User user) {
-        user.setActive(true); // Set new users as active by default
+    public User createUser(User user, String plainPassword) {
+        user.setPassword(plainPassword); // This will hash the password in the User entity
         entityManager.persist(user);
         return user;
     }
@@ -47,7 +41,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void activateUser(Long id) {
-        User user = entityManager.find(User.class, id);
+        User user = getUserById(id);
         if (user != null) {
             user.setActive(true);
             entityManager.merge(user);
@@ -57,7 +51,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void deactivateUser(Long id) {
-        User user = entityManager.find(User.class, id);
+        User user = getUserById(id);
         if (user != null) {
             user.setActive(false);
             entityManager.merge(user);
@@ -93,9 +87,9 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void changePassword(Long userId, String newPassword) {
-        User user = entityManager.find(User.class, userId);
+        User user = getUserById(userId);
         if (user != null) {
-            user.setPassword(newPassword); // In production, hash the password
+            user.setPassword(newPassword); // This will hash the new password in the User entity
             entityManager.merge(user);
         }
     }

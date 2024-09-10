@@ -16,6 +16,9 @@ public class LoginBean implements Serializable {
     @Inject
     private UserService userService;
 
+    @Inject
+    private FacesContext facesContext;
+
     private String username;
     private String password;
     private User currentUser;
@@ -24,19 +27,34 @@ public class LoginBean implements Serializable {
         User user = userService.authenticate(username, password);
         if (user != null) {
             currentUser = user;
-            return "/dashboard.xhtml?faces-redirect=true";
+            return redirectBasedOnRole(user.getRole());
         } else {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid credentials", null));
+            facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid credentials", null));
             return null;
         }
     }
 
+    private String redirectBasedOnRole(User.UserRole role) {
+        return switch (role) {
+            case ADMIN -> "/dashboard.xhtml?faces-redirect=true";
+            case REQUIREMENTS_ENGINEER -> "/dashboard.xhtml?faces-redirect=true";
+            case TEST_MANAGER -> "/dashboard.xhtml?faces-redirect=true";
+            case TEST_CREATOR -> "/dashboard.xhtml?faces-redirect=true";
+            case TESTER -> "/dashboard.xhtml?faces-redirect=true";
+            default -> "/dashboard.xhtml?faces-redirect=true";
+        };
+    }
+
     public String logout() {
-        FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
+        facesContext.getExternalContext().invalidateSession();
         return "/login.xhtml?faces-redirect=true";
     }
 
-    // Getter and Setter methods
+    public boolean hasRole(String roleName) {
+        return currentUser != null && currentUser.getRole().name().equals(roleName);
+    }
+
+    // Getters and setters for username, password, and currentUser
     public String getUsername() {
         return username;
     }

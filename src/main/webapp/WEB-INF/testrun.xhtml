@@ -49,7 +49,7 @@
                     Available Test Cases
                 </f:facet>
 
-                <p:column headerText="Title" sortBy="#{testCase.title}" filterBy="#{testCase.title}">
+                <p:column headerText="Title" sortBy="#{testCase.title}" >
                     <h:outputText value="#{testCase.title}"/>
                 </p:column>
 
@@ -71,8 +71,7 @@
                     Selected Test Cases for Test Run
                 </f:facet>
 
-                <p:column headerText="Title" sortBy="#{testRunBean.testRun.id == null ? testCaseOrTestRunTestCase.title : testCaseOrTestRunTestCase.testCase.title}"
-                          filterBy="#{testRunBean.testRun.id == null ? testCaseOrTestRunTestCase.title : testCaseOrTestRunTestCase.testCase.title}">
+                <p:column headerText="Title" sortBy="#{testRunBean.testRun.id == null ? testCaseOrTestRunTestCase.title : testCaseOrTestRunTestCase.testCase.title}" >
                     <h:outputText value="#{testRunBean.testRun.id == null ? testCaseOrTestRunTestCase.title : testCaseOrTestRunTestCase.testCase.title}"/>
                 </p:column>
 
@@ -94,11 +93,11 @@
                     Available Users
                 </f:facet>
 
-                <p:column headerText="Username" sortBy="#{user.username}" filterBy="#{user.username}">
+                <p:column headerText="Username" sortBy="#{user.username}" >
                     <h:outputText value="#{user.username}"/>
                 </p:column>
 
-                <p:column headerText="Role" sortBy="#{user.role}" filterBy="#{user.role}">
+                <p:column headerText="Role" sortBy="#{user.role}" >
                     <h:outputText value="#{user.role}"/>
                 </p:column>
 
@@ -121,14 +120,13 @@
                 </f:facet>
 
                 <p:column headerText="Username"
-                          sortBy="#{testRunBean.testRun.id == null ? userOrTestRunUser.username : userOrTestRunUser.user.username}"
-                          filterBy="#{testRunBean.testRun.id == null ? userOrTestRunUser.username : userOrTestRunUser.user.username}">
+                          sortBy="#{testRunBean.testRun.id == null ? userOrTestRunUser.username : userOrTestRunUser.user.username}" >
+
                     <h:outputText value="#{testRunBean.testRun.id == null ? userOrTestRunUser.username : userOrTestRunUser.user.username}"/>
                 </p:column>
 
                 <p:column headerText="Role"
-                          sortBy="#{testRunBean.testRun.id == null ? userOrTestRunUser.role : userOrTestRunUser.user.role}"
-                          filterBy="#{testRunBean.testRun.id == null ? userOrTestRunUser.role : userOrTestRunUser.user.role}">
+                          sortBy="#{testRunBean.testRun.id == null ? userOrTestRunUser.role : userOrTestRunUser.user.role}" >
                     <h:outputText value="#{testRunBean.testRun.id == null ? userOrTestRunUser.role : userOrTestRunUser.user.role}"/>
                 </p:column>
 
@@ -153,7 +151,7 @@
             <h:outputText value="#{testRun.customId}"/>
         </p:column>
 
-        <p:column headerText="Name" sortBy="#{testRun.name}" filterBy="#{testRun.name}">
+        <p:column headerText="Name" sortBy="#{testRun.name}" >
             <h:outputText value="#{testRun.name}"/>
         </p:column>
 
@@ -175,7 +173,7 @@
             </p:commandButton>
         </p:column>
 
-        <p:column headerText="Status" sortBy="#{testRun.status}" filterBy="#{testRun.status}">
+        <p:column headerText="Status" sortBy="#{testRun.status}" >
             <h:outputText value="#{testRun.status}"/>
         </p:column>
 

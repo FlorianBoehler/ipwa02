@@ -134,6 +134,14 @@ public class RequirementServiceImpl implements RequirementService {
         return em.createQuery(cq).getSingleResult().intValue();
     }
 
+    @Override
+    public boolean hasRelatedTestCases(Long requirementId) {
+        Long count = em.createQuery("SELECT COUNT(tc) FROM TestCase tc WHERE tc.requirement.id = :requirementId", Long.class)
+                .setParameter("requirementId", requirementId)
+                .getSingleResult();
+        return count > 0;
+    }
+
     private List<Predicate> buildPredicates(CriteriaBuilder cb, Root<Requirement> root, Map<String, FilterMeta> filterBy) {
         List<Predicate> predicates = new ArrayList<>();
 

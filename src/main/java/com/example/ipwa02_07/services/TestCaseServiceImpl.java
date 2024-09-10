@@ -6,17 +6,23 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Order;
+import jakarta.persistence.criteria.Root;
 import jakarta.transaction.Transactional;
+import org.primefaces.model.SortMeta;
+import org.primefaces.model.SortOrder;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class TestCaseServiceImpl implements TestCaseService {
-
     @PersistenceContext
     private EntityManager em;
-
     private long lastUsedNumber = 0;
 
     @PostConstruct
@@ -72,9 +78,17 @@ public class TestCaseServiceImpl implements TestCaseService {
     }
 
     @Override
-    public List<TestCase> getTestCasesByRequirement(Long requirementId) {
-        return em.createQuery("SELECT t FROM TestCase t WHERE t.requirement.id = :requirementId", TestCase.class)
-                .setParameter("requirementId", requirementId)
-                .getResultList();
+    public List<TestCase> getAllTestCasesSorted(Map<String, SortMeta> sortBy) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<TestCase> cq = cb.createQuery(TestCase.class);
+        Root<TestCase> root = cq.from(TestCase.class);
+        cq.select(root);
+        List<Order> orders = sortBy.entrySet().stream()
+                .map(e -> e.getValue().getOrder() == SortOrder.ASCENDING
+                        ? cb.asc(root.get(e.getKey()))
+                        : cb.desc(root.get(e.getKey())))
+                .collect(Collectors.toList());
+        cq.orderBy(orders);
+        return em.createQuery(cq).getResultList();
     }
 }

@@ -16,4 +16,5 @@ public interface RequirementService {
     List<Requirement> getRequirementsByPriority(Requirement.Priority priority);
     List<Requirement> getRequirements(int first, int pageSize, Map<String, SortMeta> sortBy, Map<String, FilterMeta> filterBy);
     int countRequirements(Map<String, FilterMeta> filterBy);
+    boolean hasRelatedTestCases(Long requirementId);
 }

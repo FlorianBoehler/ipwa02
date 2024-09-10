@@ -9,13 +9,14 @@ import jakarta.faces.model.SelectItem;
 import org.primefaces.model.FilterMeta;
 import org.primefaces.model.SortMeta;
 import org.primefaces.model.LazyDataModel;
-import org.primefaces.util.LangUtils;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.application.FacesMessage;
+
 
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Locale;
 import java.util.stream.Collectors;
 
 @Named
@@ -31,7 +32,7 @@ public class RequirementBean implements Serializable {
     private Requirement.Priority priority;
     private Requirement.Status status;
     private LazyDataModel<Requirement> lazyModel;
-    private boolean globalFilterOnly = false;
+
 
     public LazyDataModel<Requirement> getLazyModel() {
         if (lazyModel == null) {
@@ -48,6 +49,14 @@ public class RequirementBean implements Serializable {
             };
         }
         return lazyModel;
+    }
+
+   public void clearFields() {
+        id = null;
+        title = "";
+        description = "";
+        priority = null;
+        status = null;
     }
 
     public void saveOrUpdateRequirement() {
@@ -69,29 +78,24 @@ public class RequirementBean implements Serializable {
         clearFields();
     }
 
-    public List<Requirement> getAllRequirements() {
-        return requirementService.getAllRequirements();
-    }
-
-    public void clearFields() {
-        id = null;
-        title = "";
-        description = "";
-        priority = null;
-        status = null;
-    }
-
-
     public void editRequirement(Requirement requirement) {
+        FacesContext facesContext = FacesContext.getCurrentInstance();
         this.id = requirement.getId();
         this.title = requirement.getTitle();
         this.description = requirement.getDescription();
         this.priority = requirement.getPriority();
         this.status = requirement.getStatus();
+        facesContext.validationFailed();
     }
 
     public void deleteRequirement(Requirement requirement) {
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        if (requirementService.hasRelatedTestCases(requirement.getId())) {
+            facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Cannot delete requirement with related test cases."));
+            return;
+        }
         requirementService.deleteRequirement(requirement.getId());
+        facesContext.addMessage(null, new FacesMessage("Requirement deleted successfully"));
     }
 
     public List<SelectItem> getPriorityOptions() {
@@ -105,8 +109,6 @@ public class RequirementBean implements Serializable {
                 .map(s -> new SelectItem(s, s.name()))
                 .collect(Collectors.toList());
     }
-
-
 
     // Getter and Setter methods
     public Long getId() {
@@ -149,11 +151,4 @@ public class RequirementBean implements Serializable {
         this.status = status;
     }
 
-    public boolean isGlobalFilterOnly() {
-        return globalFilterOnly;
-    }
-
-    public void setGlobalFilterOnly(boolean globalFilterOnly) {
-        this.globalFilterOnly = globalFilterOnly;
-    }
 }

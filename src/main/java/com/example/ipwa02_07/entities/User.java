@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.Objects;
+import org.mindrot.jbcrypt.BCrypt;
 
 @Entity
 @Table(name = "users")
@@ -60,7 +61,7 @@ public class User implements Serializable {
         this.password = other.password;
         this.email = other.email;
         this.role = other.role;
-        // Note: We don't copy assignedTestCases to avoid potential issues with lazy loading
+        this.active = other.active;
     }
 
     // equals and hashCode methods
@@ -120,6 +121,14 @@ public class User implements Serializable {
         }
     }
 
+    public void setPassword(String password) {
+        this.password = BCrypt.hashpw(password, BCrypt.gensalt());
+    }
+
+    public boolean checkPassword(String password) {
+        return BCrypt.checkpw(password, this.password);
+    }
+
 
     // Getters and Setters
     public Long getId() {
@@ -140,10 +149,6 @@ public class User implements Serializable {
 
     public String getPassword() {
         return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public String getEmail() {

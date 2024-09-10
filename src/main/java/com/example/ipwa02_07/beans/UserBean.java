@@ -24,24 +24,35 @@ public class UserBean implements Serializable {
     private User selectedUser;
     private String newPassword;
     private String confirmPassword;
+    private boolean isFirstUser;
 
     @PostConstruct
     public void init() {
         loadUsers();
+        checkIfFirstUser();
     }
 
     public void loadUsers() {
         users = userService.getAllUsers();
     }
 
+    private void checkIfFirstUser() {
+        this.isFirstUser = users.isEmpty();
+    }
+
     public void saveUser() {
         try {
             if (user.getId() == null) {
-                userService.createUser(user);
+                if (newPassword == null || newPassword.isEmpty()) {
+                    FacesContext.getCurrentInstance().addMessage(null,
+                            new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Password is required for new users"));
+                    return;
+                }
+                user = userService.createUser(user, newPassword);
                 FacesContext.getCurrentInstance().addMessage(null,
                         new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "User created successfully"));
             } else {
-                userService.updateUser(user);
+                user = userService.updateUser(user);
                 FacesContext.getCurrentInstance().addMessage(null,
                         new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "User updated successfully"));
             }
@@ -51,38 +62,44 @@ public class UserBean implements Serializable {
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Failed to save user: " + e.getMessage()));
         }
+
+
     }
 
-        public void changePassword() {
+    public void createFirstAdminUser() {
         if (!newPassword.equals(confirmPassword)) {
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Passwords do not match"));
             return;
         }
+
+        user.setRole(User.UserRole.ADMIN);
+        user.setActive(true);
+
         try {
-            userService.changePassword(user.getId(), newPassword);
+            user = userService.createUser(user, newPassword);
             FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Password changed successfully"));
-            clearPasswordFields();
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Admin user created successfully"));
+            loadUsers();
+            clearForm();
+            isFirstUser = false;
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Failed to change password: " + e.getMessage()));
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Failed to create admin user: " + e.getMessage()));
         }
     }
 
     public void onUserSelect() {
         if (selectedUser != null) {
-            user = new User(selectedUser); // Create a copy to avoid modifying the original directly
+            user = new User(selectedUser);
+            newPassword = null;
+            confirmPassword = null;
         }
     }
 
     public void clearForm() {
         user = new User();
         selectedUser = null;
-        clearPasswordFields();
-    }
-
-    private void clearPasswordFields() {
         newPassword = null;
         confirmPassword = null;
     }
@@ -91,7 +108,7 @@ public class UserBean implements Serializable {
         return Arrays.asList(User.UserRole.values());
     }
 
-    // Getters and setters
+        // Getters and setters
     public User getUser() { return user; }
     public void setUser(User user) { this.user = user; }
     public List<User> getUsers() { return users; }
@@ -101,5 +118,6 @@ public class UserBean implements Serializable {
     public void setNewPassword(String newPassword) { this.newPassword = newPassword; }
     public String getConfirmPassword() { return confirmPassword; }
     public void setConfirmPassword(String confirmPassword) { this.confirmPassword = confirmPassword; }
-
+    public boolean getIsFirstUser() { return isFirstUser; }
+    public void setIsFirstUser(boolean isFirstUser) { this.isFirstUser = isFirstUser; }
 }

@@ -5,7 +5,7 @@ import java.util.List;
 
 public interface UserService {
     User authenticate(String username, String password);
-    User createUser(User user);
+    User createUser(User user, String plainPassword);
     User updateUser(User user);
     void activateUser(Long id);
     void deactivateUser(Long id);

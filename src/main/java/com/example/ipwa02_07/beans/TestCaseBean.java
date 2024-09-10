@@ -8,8 +8,12 @@ import jakarta.enterprise.context.SessionScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.faces.model.SelectItem;
+import org.primefaces.model.SortMeta;
+
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Named
@@ -28,15 +32,14 @@ public class TestCaseBean implements Serializable {
     private String prerequisites;
     private String expectedResult;
     private Long selectedRequirementId;
+    private Map<String, SortMeta> sortBy = new HashMap<>(); // Initialize sortBy
 
     public void saveOrUpdateTestCase() {
         Requirement requirement = requirementService.getRequirement(selectedRequirementId);
         if (id == null) {
-            // This is a new test case
             TestCase newTestCase = new TestCase(title, description, prerequisites, expectedResult, requirement);
             testCaseService.createTestCase(newTestCase);
         } else {
-            // This is an existing test case that needs to be updated
             TestCase existingTestCase = testCaseService.getTestCase(id);
             if (existingTestCase != null) {
                 existingTestCase.setTitle(title);
@@ -52,6 +55,13 @@ public class TestCaseBean implements Serializable {
 
     public List<TestCase> getAllTestCases() {
         return testCaseService.getAllTestCases();
+    }
+
+    public List<TestCase> getAllTestCasesSorted() {
+        if (sortBy == null) {
+            sortBy = new HashMap<>(); // Ensure sortBy is not null
+        }
+        return testCaseService.getAllTestCasesSorted(sortBy);
     }
 
     public void editTestCase(TestCase testCase) {
@@ -130,5 +140,13 @@ public class TestCaseBean implements Serializable {
 
     public void setSelectedRequirementId(Long selectedRequirementId) {
         this.selectedRequirementId = selectedRequirementId;
+    }
+
+    public Map<String, SortMeta> getSortBy() {
+        return sortBy;
+    }
+
+    public void setSortBy(Map<String, SortMeta> sortBy) {
+        this.sortBy = sortBy;
     }
 }
