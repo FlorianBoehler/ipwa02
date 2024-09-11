@@ -54,7 +54,7 @@
         </p:panel>
     </h:form>
 
-    <p:dataTable id="testCaseTable" var="testCase" value="#{testCaseBean.testCases}"
+    <p:dataTable id="testCaseTable" var="testCase" value="#{testCaseBean.allTestCases}"
                  paginator="true" rows="10" paginatorPosition="bottom"
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                  rowsPerPageTemplate="5,10,15">

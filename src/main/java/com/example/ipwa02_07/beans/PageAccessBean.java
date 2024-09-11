@@ -18,31 +18,44 @@ public class PageAccessBean {
     @Inject
     private LoginBean loginBean;
 
-    private Map<String, List<String>> pageAccessRights;
+    private Map<String, Object> accessRights;
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @PostConstruct
     public void init() {
-        pageAccessRights = new HashMap<>();
         try (InputStream is = getClass().getResourceAsStream("/page-access.json")) {
             if (is != null) {
-                pageAccessRights = objectMapper.readValue(is, new TypeReference<Map<String, List<String>>>() {});
+                accessRights = objectMapper.readValue(is, new TypeReference<Map<String, Object>>() {});
             } else {
-
+                // Handle error
+                System.err.println("Could not find page-access.json");
+                accessRights = new HashMap<>();
             }
         } catch (Exception e) {
-
             e.printStackTrace();
+            accessRights = new HashMap<>();
         }
     }
 
     public boolean hasAccessToPage(String pageName) {
-        List<String> requiredRoles = pageAccessRights.get(pageName);
+        Map<String, List<String>> pageAccess = (Map<String, List<String>>) accessRights.get("pageAccess");
+        List<String> requiredRoles = pageAccess.get(pageName);
         if (requiredRoles == null || requiredRoles.contains("ALL")) {
             return true;
         }
         for (String role : requiredRoles) {
+            if (loginBean.hasRole(role)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean canViewAllTestCases() {
+        Map<String, List<String>> testCasesAccess = (Map<String, List<String>>) accessRights.get("testCases");
+        List<String> rolesWithFullAccess = testCasesAccess.get("fullAccess");
+        for (String role : rolesWithFullAccess) {
             if (loginBean.hasRole(role)) {
                 return true;
             }

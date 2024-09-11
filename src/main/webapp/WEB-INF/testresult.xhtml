@@ -22,20 +22,8 @@
             </p:messages>
 
             <h:panelGrid columns="2" cellpadding="5">
-                <p:outputLabel for="testCase" value="Test Case:" />
-                <p:selectOneMenu id="testCase" value="#{testResultBean.selectedTestCaseId}" required="true">
-                    <f:selectItem itemLabel="Select Test Case" itemValue="" />
-                    <f:selectItems value="#{testResultBean.testCaseOptions}" />
-                </p:selectOneMenu>
-
-                <p:outputLabel for="testRun" value="Test Run:" />
-                <p:selectOneMenu id="testRun" value="#{testResultBean.selectedTestRunId}" required="true">
-                    <f:selectItem itemLabel="Select Test Run" itemValue="" />
-                    <f:selectItems value="#{testResultBean.testRunOptions}" />
-                </p:selectOneMenu>
-
                 <p:outputLabel for="status" value="Status:" />
-                <p:selectOneMenu id="status" value="#{testResultBean.status}" required="true">
+                <p:selectOneMenu id="status" value="#{testResultBean.status}">
                     <f:selectItem itemLabel="Select Status" itemValue="" />
                     <f:selectItems value="#{testResultBean.statusOptions}" />
                 </p:selectOneMenu>
@@ -66,10 +54,6 @@
                 <h:outputText value="#{testResult.testCase.title}" />
             </p:column>
 
-            <p:column headerText="Test Run" sortBy="#{testResult.testRun.name}" filterBy="#{testResult.testRun.name}">
-                <h:outputText value="#{testResult.testRun.name}" />
-            </p:column>
-
             <p:column headerText="Status" sortBy="#{testResult.status}" filterBy="#{testResult.status}">
                 <h:outputText value="#{testResult.status}" />
             </p:column>
@@ -82,6 +66,49 @@
                                  update="testResultForm:testResultTable" >
                     <p:confirm header="Confirmation" message="Are you sure you want to delete this test result?" icon="pi pi-exclamation-triangle" />
                 </p:commandButton>
+            </p:column>
+        </p:dataTable>
+
+        <p:dataTable id="testCaseTable" var="testCase" value="#{testCaseBean.filteredTestCases}"
+                     paginator="true" rows="10" paginatorPosition="bottom"
+                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                     rowsPerPageTemplate="5,10,15">
+
+            <f:facet name="header">
+                Test Cases List
+            </f:facet>
+
+            <p:column headerText="ID" sortBy="#{testCase.customId}">
+                <h:outputText value="#{testCase.customId}" />
+            </p:column>
+
+            <p:column headerText="Title" sortBy="#{testCase.title}">
+                <h:outputText value="#{testCase.title}" />
+            </p:column>
+
+            <p:column headerText="Description">
+                <h:outputText value="#{testCase.description}" />
+            </p:column>
+
+            <p:column headerText="Expected Result">
+                <h:outputText value="#{testCase.expectedResult}" />
+            </p:column>
+
+            <p:column headerText="Requirement" sortBy="#{testCase.requirement.title}">
+                <h:outputText value="#{testCase.requirement.title}" />
+            </p:column>
+
+            <p:column headerText="Assigned Tester" sortBy="#{testCase.assignedUser.username}">
+                <h:outputText value="#{testCase.assignedUser.username}" />
+            </p:column>
+
+            <p:column headerText="Actions">
+                <p:commandButton icon="pi pi-plus" action="#{testResultBean.prepareNewTestResult(testCase)}"
+                                 update="testResultForm" rendered="#{not testResultBean.hasTestResult(testCase)}"
+                                 title="Create Test Result" />
+                <p:commandButton icon="pi pi-pencil" action="#{testResultBean.editTestResult(testCase)}"
+                                 update="testResultForm" rendered="#{testResultBean.hasTestResult(testCase)}"
+                                 title="Edit Test Result" />
             </p:column>
         </p:dataTable>
     </h:form>

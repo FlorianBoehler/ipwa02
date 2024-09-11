@@ -7,6 +7,9 @@ import com.example.ipwa02_07.entities.User.UserRole;
 import com.example.ipwa02_07.services.TestCaseService;
 import com.example.ipwa02_07.services.RequirementService;
 import com.example.ipwa02_07.services.UserService;
+
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.FacesContext;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.inject.Inject;
@@ -15,6 +18,7 @@ import jakarta.faces.model.SelectItem;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 @Named
@@ -30,6 +34,15 @@ public class TestCaseBean implements Serializable {
     @Inject
     private UserService userService;
 
+    @Inject
+    private LoginBean loginBean;
+
+    @Inject
+    private PageAccessBean pageAccessBean;
+
+    @Inject
+    private FacesContext facesContext;
+
     private Long id;
     private String title;
     private String description;
@@ -37,15 +50,31 @@ public class TestCaseBean implements Serializable {
     private String expectedResult;
     private Long selectedRequirementId;
     private Long selectedUserId;
-    private List<TestCase> testCases;
+    private List<TestCase> allTestCases;
+    private List<TestCase> filteredTestCases;
 
     @PostConstruct
     public void init() {
-        loadTestCases();
+        loadAllTestCases();
+        loadFilteredTestCases();
     }
 
-    public void loadTestCases() {
-        testCases = testCaseService.getAllTestCases();
+    public void loadAllTestCases() {
+        allTestCases = testCaseService.getAllTestCases();
+    }
+
+    public void loadFilteredTestCases() {
+        if (pageAccessBean.canViewAllTestCases()) {
+            filteredTestCases = testCaseService.getAllTestCases();
+        } else {
+            User currentUser = loginBean.getCurrentUser();
+            if (currentUser != null) {
+                filteredTestCases = testCaseService.getTestCasesByTester(currentUser);
+            } else {
+                filteredTestCases = new ArrayList<>();
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "No user logged in", null));
+            }
+        }
     }
 
     public void saveOrUpdateTestCase() {
@@ -69,11 +98,7 @@ public class TestCaseBean implements Serializable {
             }
         }
         clearFields();
-        loadTestCases();
-    }
-
-    public List<TestCase> getAllTestCases() {
-        return testCases;
+        loadAllTestCases();
     }
 
     public void editTestCase(TestCase testCase) {
@@ -88,7 +113,7 @@ public class TestCaseBean implements Serializable {
 
     public void deleteTestCase(TestCase testCase) {
         testCaseService.deleteTestCase(testCase.getId());
-        loadTestCases();
+        loadAllTestCases();
     }
 
     public List<SelectItem> getRequirementOptions() {
@@ -165,13 +190,22 @@ public class TestCaseBean implements Serializable {
         this.selectedRequirementId = selectedRequirementId;
     }
 
-    public List<TestCase> getTestCases() {
-        return testCases;
+    public List<TestCase> getAllTestCases() {
+        return allTestCases;
     }
 
-    public void setTestCases(List<TestCase> testCases) {
-        this.testCases = testCases;
+    public List<TestCase> getFilteredTestCases() {
+        return filteredTestCases;
     }
+
+    public void setAllTestCases(List<TestCase> allTestCases) {
+        this.allTestCases = allTestCases;
+    }
+
+    public void setFilteredTestCases(List<TestCase> filteredTestCases) {
+        this.filteredTestCases = filteredTestCases;
+    }
+
 
     public Long getSelectedUserId() {
         return selectedUserId;

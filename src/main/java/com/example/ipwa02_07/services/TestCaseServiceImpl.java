@@ -1,6 +1,7 @@
 package com.example.ipwa02_07.services;
 
 import com.example.ipwa02_07.entities.TestCase;
+import com.example.ipwa02_07.entities.User;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
@@ -18,6 +19,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
 
 @ApplicationScoped
 public class TestCaseServiceImpl implements TestCaseService {
@@ -60,6 +62,13 @@ public class TestCaseServiceImpl implements TestCaseService {
     @Override
     public List<TestCase> getAllTestCases() {
         return em.createQuery("SELECT t FROM TestCase t", TestCase.class).getResultList();
+    }
+
+    @Override
+    public List<TestCase> getTestCasesByTester(User tester) {
+        return em.createQuery("SELECT tc FROM TestCase tc WHERE tc.assignedUser = :tester", TestCase.class)
+                .setParameter("tester", tester)
+                .getResultList();
     }
 
     @Override

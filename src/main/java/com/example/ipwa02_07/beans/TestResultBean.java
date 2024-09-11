@@ -2,7 +2,7 @@ package com.example.ipwa02_07.beans;
 
 import com.example.ipwa02_07.entities.TestResult;
 import com.example.ipwa02_07.entities.TestCase;
-import com.example.ipwa02_07.entities.TestRun;
+
 import com.example.ipwa02_07.services.TestResultService;
 import com.example.ipwa02_07.services.TestCaseService;
 import com.example.ipwa02_07.services.TestRunService;
@@ -33,9 +33,8 @@ public class TestResultBean implements Serializable {
     @Inject
     private TestCaseService testCaseService;
 
-    @Inject
-    private TestRunService testRunService;
-
+    private TestCase currentTestCase;
+    private TestResult currentTestResult;
     private Long id;
     private TestResult.Status status;
     private String result;
@@ -43,7 +42,6 @@ public class TestResultBean implements Serializable {
     private LocalDateTime executionDate;
     private Long filteredTestCaseId;
     private Long selectedTestCaseId;
-    private Long selectedTestRunId;
     private LazyDataModel<TestResult> lazyModel;
 
     public void setFilteredTestCaseId(Long testCaseId) {
@@ -74,60 +72,22 @@ public class TestResultBean implements Serializable {
     }
 
     public void saveOrUpdateTestResult() {
-        if (selectedTestCaseId == null || selectedTestRunId == null) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Please select both a Test Case and a Test Run."));
-            return;
+        if (currentTestResult == null) {
+            currentTestResult = new TestResult();
+        }
+        currentTestResult.setTestCase(currentTestCase);
+        currentTestResult.setStatus(status);
+        currentTestResult.setResult(result);
+        currentTestResult.setComment(comment);
+
+        if (currentTestResult.getId() == null) {
+            testResultService.createTestResult(currentTestResult);
+        } else {
+            testResultService.updateTestResult(currentTestResult);
         }
 
-        TestCase testCase = testCaseService.getTestCase(selectedTestCaseId);
-        TestRun testRun = testRunService.getTestRunById(selectedTestRunId);
-
-        if (testCase == null || testRun == null) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Selected Test Case or Test Run not found."));
-            return;
-        }
-
-        if (status == null) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Please select a Status."));
-            return;
-        }
-
-        try {
-            TestResult testResult;
-            if (id == null) {
-                // This is a new test result
-                testResult = new TestResult();
-            } else {
-                // This is an existing test result that needs to be updated
-                testResult = testResultService.getTestResult(id);
-                if (testResult == null) {
-                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Test Result not found for update."));
-                    return;
-                }
-            }
-
-            // Set or update the TestResult fields
-            testResult.setStatus(status);
-            testResult.setResult(result);
-            testResult.setComment(comment);
-            testResult.setExecutionDate(LocalDateTime.now());
-            testResult.setTestCase(testCase);
-            testResult.setTestRun(testRun);
-
-            if (id == null) {
-                // Create new TestResult
-                testResultService.createTestResult(testResult);
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Test Result created successfully."));
-            } else {
-                // Update existing TestResult
-                testResultService.updateTestResult(testResult);
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Test Result updated successfully."));
-            }
-
-            clearFields();
-        } catch (Exception e) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "An error occurred while saving the Test Result: " + e.getMessage()));
-        }
+        clearFields();
+        // You might want to refresh the testCaseTable here
     }
 
     public List<TestResult> getAllTestResults() {
@@ -135,23 +95,23 @@ public class TestResultBean implements Serializable {
     }
 
     public void clearFields() {
-        id = null;
         status = null;
         result = "";
         comment = "";
-        executionDate = null;
-        selectedTestCaseId = null;
-        selectedTestRunId = null;
     }
 
-    public void editTestResult(TestResult testResult) {
-        this.id = testResult.getId();
-        this.status = testResult.getStatus();
-        this.result = testResult.getResult();
-        this.comment = testResult.getComment();
-        this.executionDate = testResult.getExecutionDate();
-        this.selectedTestCaseId = testResult.getTestCase().getId();
-        this.selectedTestRunId = testResult.getTestRun().getId();
+    public void editTestResult(TestCase testCase) {
+        this.currentTestCase = testCase;
+        this.currentTestResult = testResultService.getTestResultForTestCase(testCase);
+        if (this.currentTestResult != null) {
+            this.status = currentTestResult.getStatus();
+            this.result = currentTestResult.getResult();
+            this.comment = currentTestResult.getComment();
+        } else {
+            // Handle the case where there's no TestResult for this TestCase
+            // This shouldn't happen if the UI is correctly showing edit/create buttons
+            clearFields();
+        }
     }
 
     public void deleteTestResult(TestResult testResult) {
@@ -170,10 +130,11 @@ public class TestResultBean implements Serializable {
                 .collect(Collectors.toList());
     }
 
-    public List<SelectItem> getTestRunOptions() {
-        return testRunService.getAllTestRuns().stream()
-                .map(tr -> new SelectItem(tr.getId(), tr.getName()))
-                .collect(Collectors.toList());
+    public void prepareNewTestResult(TestCase testCase) {
+        this.currentTestCase = testCase;
+        this.currentTestResult = new TestResult();
+        this.currentTestResult.setTestCase(testCase);
+        clearFields();
     }
 
     // Getters and Setters
@@ -225,11 +186,8 @@ public class TestResultBean implements Serializable {
         this.selectedTestCaseId = selectedTestCaseId;
     }
 
-    public Long getSelectedTestRunId() {
-        return selectedTestRunId;
+    public boolean hasTestResult(TestCase testCase) {
+        return testResultService.hasTestResultForTestCase(testCase);
     }
 
-    public void setSelectedTestRunId(Long selectedTestRunId) {
-        this.selectedTestRunId = selectedTestRunId;
-    }
 }

@@ -22,10 +22,6 @@ public class TestResult implements Serializable {
     @JoinColumn(name = "test_case_id", nullable = false)
     private TestCase testCase;
 
-    @ManyToOne
-    @JoinColumn(name = "test_run_id", nullable = false)
-    private TestRun testRun;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Status status;
@@ -42,9 +38,9 @@ public class TestResult implements Serializable {
     public TestResult() {
     }
 
-    public TestResult(TestCase testCase, TestRun testRun, Status status, String result, String comment) {
+    public TestResult(TestCase testCase, Status status, String result, String comment) {
         this.testCase = testCase;
-        this.testRun = testRun;
+
         this.status = status;
         this.result = result;
         this.comment = comment;
@@ -74,14 +70,6 @@ public class TestResult implements Serializable {
 
     public void setTestCase(TestCase testCase) {
         this.testCase = testCase;
-    }
-
-    public TestRun getTestRun() {
-        return testRun;
-    }
-
-    public void setTestRun(TestRun testRun) {
-        this.testRun = testRun;
     }
 
     public Status getStatus() {
@@ -139,7 +127,6 @@ public class TestResult implements Serializable {
                 "id=" + id +
                 ", customId='" + customId + '\'' +
                 ", testCase=" + testCase +
-                ", testRun=" + testRun +
                 ", status=" + status +
                 ", result='" + result + '\'' +
                 ", comment='" + comment + '\'' +

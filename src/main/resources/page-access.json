@@ -1,8 +1,14 @@
 {
-  "dashboard.xhtml": ["ALL"],
-  "requirement.xhtml": ["ADMIN", "REQUIREMENTS_ENGINEER"],
-  "testcase.xhtml": ["ADMIN", "TEST_MANAGER", "TEST_CREATOR"],
-  "testrun.xhtml": ["ADMIN", "TEST_MANAGER"],
-  "testresult.xhtml": ["ADMIN", "TEST_MANAGER", "TESTER"],
-  "user.xhtml": ["ADMIN"]
+  "pageAccess": {
+    "dashboard.xhtml": ["ALL"],
+    "requirement.xhtml": ["ADMIN", "REQUIREMENTS_ENGINEER"],
+    "testcase.xhtml": ["ADMIN", "TEST_MANAGER", "TEST_CREATOR"],
+    "testrun.xhtml": ["ADMIN", "TEST_MANAGER"],
+    "testresult.xhtml": ["ADMIN", "TEST_MANAGER", "TESTER"],
+    "user.xhtml": ["ADMIN"]
+  },
+  "testCases": {
+    "fullAccess": ["ADMIN", "TEST_MANAGER"],
+    "limitedAccess": ["TESTER"]
+  }
 }

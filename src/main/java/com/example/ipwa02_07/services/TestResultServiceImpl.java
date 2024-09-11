@@ -1,6 +1,7 @@
 package com.example.ipwa02_07.services;
 
 import com.example.ipwa02_07.entities.TestResult;
+import com.example.ipwa02_07.entities.TestCase;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
@@ -84,13 +85,6 @@ public class TestResultServiceImpl implements TestResultService {
     }
 
     @Override
-    public List<TestResult> getTestResultsByTestRun(Long testRunId) {
-        return em.createQuery("SELECT tr FROM TestResult tr WHERE tr.testRun.id = :testRunId", TestResult.class)
-                .setParameter("testRunId", testRunId)
-                .getResultList();
-    }
-
-    @Override
     public List<TestResult> getTestResults(int first, int pageSize, Map<String, SortMeta> sortBy, Map<String, FilterMeta> filterBy) {
         StringBuilder queryBuilder = new StringBuilder("SELECT tr FROM TestResult tr WHERE 1=1");
 
@@ -124,5 +118,27 @@ public class TestResultServiceImpl implements TestResultService {
     @Override
     public int countTestResults() {
         return ((Long) em.createQuery("SELECT COUNT(tr) FROM TestResult tr").getSingleResult()).intValue();
+    }
+
+    @Override
+    public TestResult getTestResultForTestCase(TestCase testCase) {
+        TypedQuery<TestResult> query = em.createQuery(
+                "SELECT tr FROM TestResult tr WHERE tr.testCase = :testCase ORDER BY tr.executionDate DESC",
+                TestResult.class
+        );
+        query.setParameter("testCase", testCase);
+        query.setMaxResults(1);
+        List<TestResult> results = query.getResultList();
+        return results.isEmpty() ? null : results.get(0);
+    }
+
+    @Override
+    public boolean hasTestResultForTestCase(TestCase testCase) {
+        TypedQuery<Long> query = em.createQuery(
+                "SELECT COUNT(tr) FROM TestResult tr WHERE tr.testCase = :testCase",
+                Long.class
+        );
+        query.setParameter("testCase", testCase);
+        return query.getSingleResult() > 0;
     }
 }
