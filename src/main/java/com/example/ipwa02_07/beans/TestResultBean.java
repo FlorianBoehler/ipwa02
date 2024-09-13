@@ -80,6 +80,8 @@ public class TestResultBean implements Serializable {
         currentTestResult.setResult(result);
         currentTestResult.setComment(comment);
 
+        currentTestResult.setExecutionDate(LocalDateTime.now());
+
         if (currentTestResult.getId() == null) {
             testResultService.createTestResult(currentTestResult);
         } else {
