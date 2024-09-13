@@ -3,9 +3,7 @@ package com.example.ipwa02_07.entities;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.Objects;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -35,9 +33,6 @@ public class User implements Serializable {
 
     @OneToMany(mappedBy = "assignedUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<TestCase> assignedTestCases = new ArrayList<>();
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<TestRunUser> testRunUsers = new HashSet<>();
 
     // Constructors
     public User() {}
@@ -93,34 +88,6 @@ public class User implements Serializable {
                 '}';
     }
 
-    public Set<TestRunUser> getTestRunUsers() {
-        return testRunUsers;
-    }
-
-    public void setTestRunUsers(Set<TestRunUser> testRunUsers) {
-        this.testRunUsers = testRunUsers;
-    }
-
-    // Helper methods for managing the bidirectional relationship with TestRunUser
-    public void addTestRunUser(TestRun testRun) {
-        TestRunUser testRunUser = new TestRunUser(testRun, this);
-        testRunUsers.add(testRunUser);
-        testRun.getTestRunUsers().add(testRunUser);
-    }
-
-    public void removeTestRunUser(TestRun testRun) {
-        TestRunUser testRunUser = testRunUsers.stream()
-                .filter(tru -> tru.getTestRun().equals(testRun) && tru.getUser().equals(this))
-                .findFirst()
-                .orElse(null);
-        if (testRunUser != null) {
-            testRunUsers.remove(testRunUser);
-            testRun.getTestRunUsers().remove(testRunUser);
-            testRunUser.setTestRun(null);
-            testRunUser.setUser(null);
-        }
-    }
-
     public void setPassword(String password) {
         this.password = BCrypt.hashpw(password, BCrypt.gensalt());
     }
@@ -128,7 +95,6 @@ public class User implements Serializable {
     public boolean checkPassword(String password) {
         return BCrypt.checkpw(password, this.password);
     }
-
 
     // Getters and Setters
     public Long getId() {
@@ -202,6 +168,4 @@ public class User implements Serializable {
         TESTER,
         ADMIN
     }
-
-
 }

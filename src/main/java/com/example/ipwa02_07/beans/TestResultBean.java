@@ -2,15 +2,11 @@ package com.example.ipwa02_07.beans;
 
 import com.example.ipwa02_07.entities.TestResult;
 import com.example.ipwa02_07.entities.TestCase;
-
 import com.example.ipwa02_07.services.TestResultService;
 import com.example.ipwa02_07.services.TestCaseService;
-import com.example.ipwa02_07.services.TestRunService;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
-import jakarta.faces.application.FacesMessage;
-import jakarta.faces.context.FacesContext;
 import jakarta.faces.model.SelectItem;
 import org.primefaces.model.FilterMeta;
 import org.primefaces.model.SortMeta;

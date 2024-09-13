@@ -28,13 +28,50 @@
             <p:panel header="Quick Statistics" style="margin-top: 20px;">
                 <h:panelGrid columns="2" cellpadding="10">
                     <h:outputText value="Total Requirements: " />
+                    <h:outputText value="#{statisticsBean.totalRequirements}" />
 
+                    <h:outputText value="Requirements by Status: " />
+                    <h:panelGroup>
+                        <ui:repeat value="#{statisticsBean.requirementsByStatus.entrySet().toArray()}" var="entry">
+                            <h:outputText value="#{entry.key}: #{entry.value}" /><br/>
+                        </ui:repeat>
+                    </h:panelGroup>
+
+                    <h:outputText value="Requirements by Priority: " />
+                    <h:panelGroup>
+                        <ui:repeat value="#{statisticsBean.requirementsByPriority.entrySet().toArray()}" var="entry">
+                            <h:outputText value="#{entry.key}: #{entry.value}" /><br/>
+                        </ui:repeat>
+                    </h:panelGroup>
+
+                    <h:panelGroup><br/></h:panelGroup>
+                    <h:panelGroup><br/></h:panelGroup>
 
                     <h:outputText value="Total Test Cases: " />
+                    <h:outputText value="#{statisticsBean.totalTestCases}" />
 
+                    <h:outputText value="Average Test Cases per Requirement: " />
+                    <h:outputText value="#{statisticsBean.averageTestCasesPerRequirement}">
+                        <f:convertNumber maxFractionDigits="2" />
+                    </h:outputText>
 
-                    <h:outputText value="Your Assigned Test Cases: " />
+                    <h:panelGroup><br/></h:panelGroup>
+                    <h:panelGroup><br/></h:panelGroup>
 
+                    <h:outputText value="Total Test Runs: " />
+                    <h:outputText value="#{statisticsBean.totalTestRuns}" />
+
+                    <h:outputText value="Test Runs by Status: " />
+                    <h:panelGroup>
+                        <ui:repeat value="#{statisticsBean.testRunsByStatus.entrySet().toArray()}" var="entry">
+                            <h:outputText value="#{entry.key}: #{entry.value}" /><br/>
+                        </ui:repeat>
+                    </h:panelGroup>
+
+                    <h:outputText value="Average Test Cases per Test Run: " />
+                    <h:outputText value="#{statisticsBean.averageTestCasesPerTestRun}">
+                        <f:convertNumber maxFractionDigits="2" />
+                    </h:outputText>
                 </h:panelGrid>
             </p:panel>
         </h:form>
