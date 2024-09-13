@@ -23,25 +23,6 @@
             <p:autoUpdate />
         </p:messages>
 
-        <p:dataTable id="userTable" value="#{userBean.users}" var="user"
-                     selection="#{userBean.selectedUser}" selectionMode="single" rowKey="#{user.id}">
-            <p:ajax event="rowSelect" listener="#{userBean.onUserSelect}" update=":userForm:userDetail :userForm:changePassword :userForm:confirmPassword" />
-
-            <p:column headerText="Username">
-                <h:outputText value="#{user.username}" />
-            </p:column>
-            <p:column headerText="Email">
-                <h:outputText value="#{user.email}" />
-            </p:column>
-            <p:column headerText="Role">
-                <h:outputText value="#{user.role}" />
-            </p:column>
-            <p:column headerText="Active">
-                <h:outputText value="#{user.active ? 'Yes' : 'No'}" />
-            </p:column>
-
-        </p:dataTable>
-
         <p:panel id="userDetail" header="User Details">
             <h:panelGrid columns="3" cellpadding="5">
 
@@ -78,6 +59,27 @@
             <p:commandButton value="Clear" action="#{userBean.clearForm}" update= ":userForm:messages @form" />
 
         </p:panel>
+
+        <p:dataTable id="userTable" value="#{userBean.users}" var="user"
+                     selection="#{userBean.selectedUser}" selectionMode="single" rowKey="#{user.id}">
+            <p:ajax event="rowSelect" listener="#{userBean.onUserSelect}" update=":userForm:userDetail :userForm:changePassword :userForm:confirmPassword" />
+
+            <p:column headerText="Username">
+                <h:outputText value="#{user.username}" />
+            </p:column>
+            <p:column headerText="Email">
+                <h:outputText value="#{user.email}" />
+            </p:column>
+            <p:column headerText="Role">
+                <h:outputText value="#{user.role}" />
+            </p:column>
+            <p:column headerText="Active">
+                <h:outputText value="#{user.active ? 'Yes' : 'No'}" />
+            </p:column>
+
+        </p:dataTable>
+
+
     </h:form>
 </h:body>
 </html>
