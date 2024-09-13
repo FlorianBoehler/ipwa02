@@ -33,6 +33,7 @@ public class TestResultBean implements Serializable {
     @Inject
     private TestCaseService testCaseService;
 
+
     private TestCase currentTestCase;
     private TestResult currentTestResult;
     private Long id;
@@ -70,6 +71,7 @@ public class TestResultBean implements Serializable {
         }
         return lazyModel;
     }
+
 
     public void saveOrUpdateTestResult() {
         if (currentTestResult == null) {

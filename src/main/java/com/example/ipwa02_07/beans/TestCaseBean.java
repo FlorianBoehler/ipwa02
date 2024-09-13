@@ -123,14 +123,15 @@ public class TestCaseBean implements Serializable {
                 .collect(Collectors.toList());
     }
 
-    public void clearFields() {
-        id = null;
-        title = "";
-        description = "";
-        prerequisites = "";
-        expectedResult = "";
-        selectedRequirementId = null;
-        selectedUserId = null;
+    public String clearFields() {
+        this.id = null;
+        this.title = "";
+        this.description = "";
+        this.prerequisites = "";
+        this.expectedResult = "";
+        this.selectedRequirementId = null;
+        this.selectedUserId = null;
+        return "";
     }
 
     public List<SelectItem> getUserOptions() {

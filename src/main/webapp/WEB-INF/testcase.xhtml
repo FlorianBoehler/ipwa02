@@ -50,7 +50,7 @@
             </h:panelGrid>
 
             <p:commandButton value="Save" action="#{testCaseBean.saveOrUpdateTestCase}" update="testCaseForm:messages testCaseTable testCaseForm" />
-            <p:commandButton value="Cancel" action="#{testCaseBean.clearFields}" update="testCaseForm" immediate="true" />
+            <p:commandButton value="Cancel" action="#{testCaseBean.clearFields}" update="testCaseForm" resetValues="true" immediate="true" />
         </p:panel>
     </h:form>
 
