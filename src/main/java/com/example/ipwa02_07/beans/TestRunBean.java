@@ -4,7 +4,6 @@ import com.example.ipwa02_07.entities.TestRun;
 import com.example.ipwa02_07.entities.TestCase;
 import com.example.ipwa02_07.services.TestRunService;
 import com.example.ipwa02_07.services.TestCaseService;
-import com.example.ipwa02_07.entities.TestRunTestCase;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.application.FacesMessage;
@@ -29,6 +28,7 @@ public class TestRunBean implements Serializable {
     private List<TestRun> testRuns;
     private List<TestCase> availableTestCases;
     private List<TestCase> selectedTestCases = new ArrayList<>();
+    private List<TestCase> testCases;
 
     @PostConstruct
     public void init() {
@@ -48,7 +48,7 @@ public class TestRunBean implements Serializable {
         loadAvailableTestCases();
     }
 
-    public String saveTestRun() {
+    public void saveTestRun() {
         if (testRun.getId() == null) {
             // This is a new TestRun
             testRun = testRunService.saveTestRun(testRun);
@@ -61,16 +61,23 @@ public class TestRunBean implements Serializable {
         }
         clearForm();
         loadTestRuns();
-        return null;
     }
+
 
     public void editTestRun(TestRun testRun) {
         this.testRun = testRunService.getTestRunWithTestCases(testRun.getId());
     }
 
+
     public void deleteTestRun(TestRun testRun) {
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        if (testRunService.hasRelatedTestCases(testRun.getId())) {
+            facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Cannot delete test run with related test cases."));
+            return;
+        }
         testRunService.deleteTestRun(testRun.getId());
         loadTestRuns();
+        facesContext.addMessage(null, new FacesMessage("Test run deleted successfully"));
     }
 
     public boolean isTestCaseAlreadyAdded(TestCase testCase) {
@@ -79,14 +86,13 @@ public class TestRunBean implements Serializable {
             return selectedTestCases.stream()
                     .anyMatch(tc -> tc.getId().equals(testCase.getId()));
         } else {
-            // This is an existing TestRun, check the testRunTestCases list
-            if (testRun.getTestRunTestCases() == null) {
-                return false;
-            }
-            return testRun.getTestRunTestCases().stream()
-                    .anyMatch(trtc -> trtc.getTestCase().getId().equals(testCase.getId()));
+            // This is an existing TestRun, check the testCases list
+            return testRun.getTestCases().stream()
+                    .anyMatch(tc -> tc.getId().equals(testCase.getId()));
         }
     }
+
+
     public void clearForm() {
         testRun = new TestRun();
         selectedTestCases.clear();
@@ -113,25 +119,24 @@ public class TestRunBean implements Serializable {
         }
     }
 
-    public void removeTestCaseFromTestRun(Object testCaseOrTestRunTestCase) {
-        TestCase testCase;
-        if (testCaseOrTestRunTestCase instanceof TestCase) {
-            testCase = (TestCase) testCaseOrTestRunTestCase;
-        } else if (testCaseOrTestRunTestCase instanceof TestRunTestCase) {
-            testCase = ((TestRunTestCase) testCaseOrTestRunTestCase).getTestCase();
-        } else {
-            return;
-        }
+    public void removeTestCaseFromTestRun(TestCase testCase) {
+        FacesContext facesContext = FacesContext.getCurrentInstance();
 
         if (testRun.getId() == null) {
             selectedTestCases.remove(testCase);
+            facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Test Case removed from selection"));
         } else {
+            if (testCaseService.hasRelatedTestResults(testCase.getId())) {
+                facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Cannot remove Test Case with related Test Results"));
+                return;
+            }
+
             TestRun updatedTestRun = testRunService.removeTestCaseFromTestRun(testRun.getId(), testCase.getId());
             if (updatedTestRun != null) {
                 this.testRun = updatedTestRun;
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Test Case removed from Test Run"));
+                facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Test Case removed from Test Run"));
             } else {
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Failed to remove Test Case from Test Run"));
+                facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Failed to remove Test Case from Test Run"));
             }
         }
     }
@@ -177,5 +182,13 @@ public class TestRunBean implements Serializable {
 
     public void setSelectedTestCases(List<TestCase> selectedTestCases) {
         this.selectedTestCases = selectedTestCases;
+    }
+
+    public List<TestCase> getTestCases() {
+        return testCases;
+    }
+
+    public void setTestCases(List<TestCase> testCases) {
+        this.testCases = testCases;
     }
 }

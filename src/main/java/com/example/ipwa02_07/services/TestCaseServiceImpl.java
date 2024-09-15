@@ -82,8 +82,27 @@ public class TestCaseServiceImpl implements TestCaseService {
     public void deleteTestCase(Long id) {
         TestCase testCase = getTestCase(id);
         if (testCase != null) {
+            if (testCase.getTestRun() != null) {
+                testCase.getTestRun().getTestCases().remove(testCase);
+                testCase.setTestRun(null);
+            }
             em.remove(testCase);
         }
+    }
+
+    @Override
+    public List<TestCase> getTestCasesByTestRun(Long testRunId) {
+        return em.createQuery("SELECT tc FROM TestCase tc WHERE tc.testRun.id = :testRunId", TestCase.class)
+                .setParameter("testRunId", testRunId)
+                .getResultList();
+    }
+
+    @Override
+    public boolean hasRelatedTestResults(Long testCaseId) {
+        TypedQuery<Long> query = em.createQuery(
+                "SELECT COUNT(tr) FROM TestResult tr WHERE tr.testCase.id = :testCaseId", Long.class);
+        query.setParameter("testCaseId", testCaseId);
+        return query.getSingleResult() > 0;
     }
 
 

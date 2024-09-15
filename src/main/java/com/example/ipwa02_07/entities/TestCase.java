@@ -32,8 +32,9 @@ public class TestCase implements Serializable {
     @JoinColumn(name = "requirement_id", nullable = false)
     private Requirement requirement;
 
-    @OneToMany(mappedBy = "testCase", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<TestRunTestCase> testRunTestCases = new HashSet<>();
+    @ManyToOne
+    @JoinColumn(name = "test_run_id")
+    private TestRun testRun;
 
     // Constructors, Getters and Setters
 
@@ -116,8 +117,8 @@ public class TestCase implements Serializable {
         this.assignedUser = assignedUser;
     }
 
-    public Set<TestRunTestCase> getTestRunTestCases() {
-        return testRunTestCases;
-    }
+    public TestRun getTestRun() { return testRun; }
+
+    public void setTestRun(TestRun testRun) { this.testRun = testRun; }
 
 }

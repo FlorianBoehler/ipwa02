@@ -68,7 +68,7 @@ public class StatisticsBean implements Serializable {
             return 0;
         }
         long totalTestCases = testRuns.stream()
-                .mapToLong(tr -> tr.getTestRunTestCases().size())
+                .mapToLong(tr -> tr.getTestCases().size())
                 .sum();
         return (double) totalTestCases / testRuns.size();
     }

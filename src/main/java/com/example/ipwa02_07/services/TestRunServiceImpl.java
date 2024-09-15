@@ -2,7 +2,6 @@ package com.example.ipwa02_07.services;
 
 import com.example.ipwa02_07.entities.TestCase;
 import com.example.ipwa02_07.entities.TestRun;
-import com.example.ipwa02_07.entities.TestRunTestCase;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
@@ -53,11 +52,15 @@ public class TestRunServiceImpl implements TestRunService {
         return testRun;
     }
 
+
     @Override
     @Transactional
     public void deleteTestRun(Long id) {
         TestRun testRun = getTestRunById(id);
         if (testRun != null) {
+            for (TestCase testCase : testRun.getTestCases()) {
+                testCase.setTestRun(null);
+            }
             em.remove(testRun);
         }
     }
@@ -69,10 +72,11 @@ public class TestRunServiceImpl implements TestRunService {
 
     @Override
     public TestRun getTestRunWithTestCases(Long id) {
-        return em.createQuery("SELECT tr FROM TestRun tr LEFT JOIN FETCH tr.testRunTestCases WHERE tr.id = :id", TestRun.class)
+        return em.createQuery("SELECT tr FROM TestRun tr LEFT JOIN FETCH tr.testCases WHERE tr.id = :id", TestRun.class)
                 .setParameter("id", id)
                 .getSingleResult();
     }
+
 
     @Override
     public List<TestRun> getAllTestRuns() {
@@ -83,48 +87,39 @@ public class TestRunServiceImpl implements TestRunService {
     @Transactional
     public TestRun addTestCaseToTestRun(Long testRunId, Long testCaseId) {
         TestRun testRun = em.find(TestRun.class, testRunId);
-        if (testRun == null) {
-            return null;
-        }
-
         TestCase testCase = em.find(TestCase.class, testCaseId);
-        if (testCase == null) {
-            return testRun;
-        }
 
-        // Check if the association already exists
-        boolean associationExists = testRun.getTestRunTestCases().stream()
-                .anyMatch(trtc -> trtc.getTestCase().getId().equals(testCaseId));
-
-        if (!associationExists) {
-            TestRunTestCase testRunTestCase = new TestRunTestCase(testRun, testCase);
-            testRun.getTestRunTestCases().add(testRunTestCase);
-            testCase.getTestRunTestCases().add(testRunTestCase);
-            em.persist(testRunTestCase);
+        if (testRun != null && testCase != null) {
+            testCase.setTestRun(testRun);
+            testRun.getTestCases().add(testCase);
+            em.merge(testRun);
         }
 
         return testRun;
     }
 
     @Override
-    @Transactional
     public TestRun removeTestCaseFromTestRun(Long testRunId, Long testCaseId) {
         TestRun testRun = em.find(TestRun.class, testRunId);
-        if (testRun == null) {
-            return null;
+        if (testRun != null) {
+            TestCase testCase = em.find(TestCase.class, testCaseId);
+            if (testCase != null) {
+                testRun.getTestCases().remove(testCase);
+                testCase.setTestRun(null);
+                em.merge(testRun);
+                em.merge(testCase);
+                return testRun;
+            }
         }
-
-        TestRunTestCase testRunTestCaseToRemove = testRun.getTestRunTestCases().stream()
-                .filter(trtc -> trtc.getTestCase().getId().equals(testCaseId))
-                .findFirst()
-                .orElse(null);
-
-        if (testRunTestCaseToRemove != null) {
-            testRun.getTestRunTestCases().remove(testRunTestCaseToRemove);
-            testRunTestCaseToRemove.getTestCase().getTestRunTestCases().remove(testRunTestCaseToRemove);
-            em.remove(testRunTestCaseToRemove);
-        }
-
-        return testRun;
+        return null;
     }
+
+    @Override
+    public boolean hasRelatedTestCases(Long testRunId) {
+        TypedQuery<Long> query = em.createQuery(
+                "SELECT COUNT(tc) FROM TestCase tc WHERE tc.testRun.id = :testRunId", Long.class);
+        query.setParameter("testRunId", testRunId);
+        return query.getSingleResult() > 0;
+    }
+
 }

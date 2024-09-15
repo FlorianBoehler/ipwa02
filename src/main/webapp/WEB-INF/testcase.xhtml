@@ -42,8 +42,8 @@
                     <f:selectItems value="#{testCaseBean.requirementOptions}" />
                 </p:selectOneMenu>
 
-                <p:outputLabel for="assignedUser" value="Assigned User:" />
-                <p:selectOneMenu id="assignedUser" value="#{testCaseBean.selectedUserId}">
+                <p:outputLabel for="assignedUser" value="Assigned User:" rendered="#{loginBean.currentUser.role == 'ADMIN'}" />
+                <p:selectOneMenu id="assignedUser" value="#{testCaseBean.selectedUserId}" rendered="#{loginBean.currentUser.role == 'ADMIN'}" >
                     <f:selectItem itemLabel="Select User" itemValue="" />
                     <f:selectItems value="#{testCaseBean.userOptions}" />
                 </p:selectOneMenu>

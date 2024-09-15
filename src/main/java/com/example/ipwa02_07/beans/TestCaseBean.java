@@ -4,9 +4,11 @@ import com.example.ipwa02_07.entities.TestCase;
 import com.example.ipwa02_07.entities.Requirement;
 import com.example.ipwa02_07.entities.User;
 import com.example.ipwa02_07.entities.User.UserRole;
+import com.example.ipwa02_07.entities.TestRun;
 import com.example.ipwa02_07.services.TestCaseService;
 import com.example.ipwa02_07.services.RequirementService;
 import com.example.ipwa02_07.services.UserService;
+import com.example.ipwa02_07.services.TestRunService;
 
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
@@ -35,6 +37,9 @@ public class TestCaseBean implements Serializable {
     private UserService userService;
 
     @Inject
+    private TestRunService testRunService;
+
+    @Inject
     private LoginBean loginBean;
 
     @Inject
@@ -52,6 +57,7 @@ public class TestCaseBean implements Serializable {
     private Long selectedUserId;
     private List<TestCase> allTestCases;
     private List<TestCase> filteredTestCases;
+    private Long testRunId;
 
     @PostConstruct
     public void init() {
@@ -84,6 +90,10 @@ public class TestCaseBean implements Serializable {
         if (id == null) {
             TestCase newTestCase = new TestCase(title, description, prerequisites, expectedResult, requirement);
             newTestCase.setAssignedUser(assignedUser);
+            if (testRunId != null) {
+                TestRun testRun = testRunService.getTestRunById(testRunId);
+                newTestCase.setTestRun(testRun);
+            }
             testCaseService.createTestCase(newTestCase);
         } else {
             TestCase existingTestCase = testCaseService.getTestCase(id);
@@ -94,12 +104,19 @@ public class TestCaseBean implements Serializable {
                 existingTestCase.setExpectedResult(expectedResult);
                 existingTestCase.setRequirement(requirement);
                 existingTestCase.setAssignedUser(assignedUser);
+                if (testRunId != null) {
+                    TestRun testRun = testRunService.getTestRunById(testRunId);
+                    existingTestCase.setTestRun(testRun);
+                } else {
+                    existingTestCase.setTestRun(null);
+                }
                 testCaseService.updateTestCase(existingTestCase);
             }
         }
         clearFields();
         loadAllTestCases();
     }
+
 
     public void editTestCase(TestCase testCase) {
         this.id = testCase.getId();
@@ -112,8 +129,14 @@ public class TestCaseBean implements Serializable {
     }
 
     public void deleteTestCase(TestCase testCase) {
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        if (testCaseService.hasRelatedTestResults(testCase.getId())) {
+            facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Cannot delete test case with related test result."));
+            return;
+        }
         testCaseService.deleteTestCase(testCase.getId());
         loadAllTestCases();
+        facesContext.addMessage(null, new FacesMessage("Test case deleted successfully"));
     }
 
     public List<SelectItem> getRequirementOptions() {
@@ -214,5 +237,13 @@ public class TestCaseBean implements Serializable {
 
     public void setSelectedUserId(Long selectedUserId) {
         this.selectedUserId = selectedUserId;
+    }
+
+    public Long getTestRunId() {
+        return testRunId;
+    }
+
+    public void setTestRunId(Long testRunId) {
+        this.testRunId = testRunId;
     }
 }

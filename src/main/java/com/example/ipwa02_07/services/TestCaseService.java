@@ -11,4 +11,6 @@ public interface TestCaseService {
     List<TestCase> getTestCasesByTester(User tester);
     void updateTestCase(TestCase testCase);
     void deleteTestCase(Long id);
+    List<TestCase> getTestCasesByTestRun(Long testRunId);
+    boolean hasRelatedTestResults(Long testCaseId);
 }

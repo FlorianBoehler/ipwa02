@@ -35,7 +35,7 @@ public class TestRun implements Serializable {
     private TestRunStatus status;
 
     @OneToMany(mappedBy = "testRun", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    private Set<TestRunTestCase> testRunTestCases = new HashSet<>();
+    private Set<TestCase> testCases = new HashSet<>();
 
 
     public TestRun() {}
@@ -46,6 +46,17 @@ public class TestRun implements Serializable {
         IN_PROGRESS,
         COMPLETED
     }
+
+    public void addTestCase(TestCase testCase) {
+        testCases.add(testCase);
+        testCase.setTestRun(this);
+    }
+
+    public void removeTestCase(TestCase testCase) {
+        testCases.remove(testCase);
+        testCase.setTestRun(null);
+    }
+
 
     // Getter and Setter methods
     public Long getId() {
@@ -104,32 +115,13 @@ public class TestRun implements Serializable {
         this.status = status;
     }
 
-    public Set<TestRunTestCase> getTestRunTestCases() {
-        return testRunTestCases;
+    public Set<TestCase> getTestCases() {
+        return testCases;
     }
 
-    public void setTestRunTestCases(Set<TestRunTestCase> testRunTestCases) {
-        this.testRunTestCases = testRunTestCases;
+    public void setTestCases(Set<TestCase> testCases) {
+        this.testCases = testCases;
     }
 
-    public void addTestRunTestCase(TestCase testCase) {
-        TestRunTestCase testRunTestCase = new TestRunTestCase(this, testCase);
-        if (!testRunTestCases.contains(testRunTestCase)) {
-            testRunTestCases.add(testRunTestCase);
-            testCase.getTestRunTestCases().add(testRunTestCase);
-        }
-    }
 
-    public void removeTestRunTestCase(TestCase testCase) {
-        for (Iterator<TestRunTestCase> iterator = testRunTestCases.iterator(); iterator.hasNext(); ) {
-            TestRunTestCase testRunTestCase = iterator.next();
-            if (testRunTestCase.getTestRun().equals(this) &&
-                    testRunTestCase.getTestCase().equals(testCase)) {
-                iterator.remove();
-                testCase.getTestRunTestCases().remove(testRunTestCase);
-                testRunTestCase.setTestRun(null);
-                testRunTestCase.setTestCase(null);
-            }
-        }
-    }
 }

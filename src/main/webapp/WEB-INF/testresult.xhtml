@@ -15,6 +15,55 @@
 
 <h:body rendered="#{pageAccessBean.hasAccessToPage('testresult.xhtml')}">
     <ui:include src="/WEB-INF/templates/menubar.xhtml" />
+
+    <h:form id="adminForm" rendered="#{loginBean.currentUser.role == 'ADMIN'}">
+        <p:dataTable id="testResultTable" var="testResult" value="#{testResultBean.lazyModel}"
+                     lazy="true" rows="10" paginator="true" paginatorPosition="bottom"
+                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                     rowsPerPageTemplate="5,10,15">
+
+            <f:facet name="header">
+                All Test Results (Overview)
+            </f:facet>
+
+            <p:column headerText="ID" sortBy="#{testResult.customId}">
+                <h:outputText value="#{testResult.customId}" />
+            </p:column>
+
+            <p:column headerText="Test Case" sortBy="#{testResult.testCase.title}">
+                <h:outputText value="#{testResult.testCase.title}" />
+            </p:column>
+
+            <p:column headerText="Status" sortBy="#{testResult.status}">
+                <h:outputText value="#{testResult.status}" />
+            </p:column>
+
+            <p:column headerText="Result">
+                <h:outputText value="#{testResult.result}" />
+            </p:column>
+
+            <p:column headerText="Comment">
+                <h:outputText value="#{testResult.comment}" />
+            </p:column>
+
+            <p:column headerText="Execution Date" sortBy="#{testResult.executionDate}">
+                <h:outputText value="#{testResult.executionDate}">
+                    <f:converter converterId="localDateTimeConverter" />
+                </h:outputText>
+            </p:column>
+
+            <p:column headerText="Actions">
+                <p:commandButton icon="pi pi-pencil" action="#{testResultBean.editTestResult(testResult.testCase)}"
+                                 update=":mainForm:testCaseTable :dialogForm" oncomplete="PF('testResultDialog').show()"
+                                 title="Edit Test Result" />
+                <p:commandButton icon="pi pi-trash" action="#{testResultBean.deleteTestResult(testResult)}"
+                                 update=":mainForm:testCaseTable @form" title="Delete Test Result">
+                    <p:confirm header="Confirmation" message="Are you sure you want to delete this test result?" icon="pi pi-exclamation-triangle" />
+                </p:commandButton>
+            </p:column>
+        </p:dataTable>
+    </h:form>
+
     <h:form id="mainForm">
 
         <p:dataTable id="testCaseTable" var="testCase" value="#{testCaseBean.filteredTestCases}"
@@ -23,7 +72,7 @@
                      rowsPerPageTemplate="5,10,15">
 
             <f:facet name="header">
-                Test Cases List
+                Assigned Test Cases
             </f:facet>
 
             <p:column headerText="ID" sortBy="#{testCase.customId}">
@@ -50,7 +99,7 @@
                 <h:outputText value="#{testCase.assignedUser.username}" />
             </p:column>
 
-            <p:column headerText="Actions">
+            <p:column headerText="Add / Edit Testresult" rendered="#{loginBean.currentUser.role == 'ADMIN' or loginBean.currentUser.role == 'TESTER'}" >
                 <p:commandButton icon="pi pi-plus" action="#{testResultBean.prepareNewTestResult(testCase)}"
                                  update=":dialogForm" oncomplete="PF('testResultDialog').show()"
                                  rendered="#{not testResultBean.hasTestResult(testCase)}"
@@ -59,6 +108,10 @@
                                  update=":dialogForm" oncomplete="PF('testResultDialog').show()"
                                  rendered="#{testResultBean.hasTestResult(testCase)}"
                                  title="Edit Test Result" />
+                <p:commandButton icon="pi pi-trash" action="#{testResultBean.deleteTestResult(testResult)}"
+                                 update=":mainForm:testCaseTable @form" title="Delete Test Result">
+                    <p:confirm header="Confirmation" message="Are you sure you want to delete this test result?" icon="pi pi-exclamation-triangle" />
+                </p:commandButton>
             </p:column>
         </p:dataTable>
     </h:form>
@@ -85,7 +138,7 @@
             </h:panelGrid>
 
             <p:commandButton value="Save" action="#{testResultBean.saveOrUpdateTestResult}"
-                             update=":mainForm:testCaseTable @form"
+                             update=":adminForm :mainForm:testCaseTable @form"
                              oncomplete="if(!args.validationFailed) PF('testResultDialog').hide()" />
 
             <p:commandButton value="Clear" action="#{testResultBean.clearFields}"

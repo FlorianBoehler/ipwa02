@@ -10,7 +10,7 @@ public interface TestRunService {
     TestRun getTestRunById(Long id);
     TestRun getTestRunWithTestCases(Long id);
     List<TestRun> getAllTestRuns();
-
     TestRun addTestCaseToTestRun(Long testRunId, Long testCaseId);
     TestRun removeTestCaseFromTestRun(Long testRunId, Long testCaseId);
+    boolean hasRelatedTestCases(Long testRunId);
 }
