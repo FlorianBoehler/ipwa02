@@ -13,4 +13,5 @@ public interface TestCaseService {
     void deleteTestCase(Long id);
     List<TestCase> getTestCasesByTestRun(Long testRunId);
     boolean hasRelatedTestResults(Long testCaseId);
+    List<TestCase> getAllTestCasesNotAssignedToTestRun();
 }

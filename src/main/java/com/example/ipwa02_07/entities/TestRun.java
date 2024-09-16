@@ -34,7 +34,7 @@ public class TestRun implements Serializable {
     @Column(nullable = false)
     private TestRunStatus status;
 
-    @OneToMany(mappedBy = "testRun", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "testRun", cascade = CascadeType.ALL, orphanRemoval = false, fetch = FetchType.EAGER)
     private Set<TestCase> testCases = new HashSet<>();
 
 

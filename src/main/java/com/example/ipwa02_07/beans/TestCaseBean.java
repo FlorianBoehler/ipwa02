@@ -13,7 +13,7 @@ import com.example.ipwa02_07.services.TestRunService;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.annotation.PostConstruct;
-import jakarta.enterprise.context.SessionScoped;
+import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.faces.model.SelectItem;
@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 @Named
-@SessionScoped
+@ViewScoped
 public class TestCaseBean implements Serializable {
 
     @Inject

@@ -13,4 +13,5 @@ public interface TestRunService {
     TestRun addTestCaseToTestRun(Long testRunId, Long testCaseId);
     TestRun removeTestCaseFromTestRun(Long testRunId, Long testCaseId);
     boolean hasRelatedTestCases(Long testRunId);
+
 }

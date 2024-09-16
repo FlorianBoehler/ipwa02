@@ -5,6 +5,7 @@ import com.example.ipwa02_07.entities.TestCase;
 import com.example.ipwa02_07.services.TestResultService;
 import com.example.ipwa02_07.services.TestCaseService;
 import jakarta.enterprise.context.SessionScoped;
+import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.faces.model.SelectItem;
@@ -20,7 +21,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Named
-@SessionScoped
+@ViewScoped
 public class TestResultBean implements Serializable {
 
     @Inject
@@ -28,7 +29,6 @@ public class TestResultBean implements Serializable {
 
     @Inject
     private TestCaseService testCaseService;
-
 
     private TestCase currentTestCase;
     private TestResult currentTestResult;
@@ -108,8 +108,6 @@ public class TestResultBean implements Serializable {
             this.result = currentTestResult.getResult();
             this.comment = currentTestResult.getComment();
         } else {
-            // Handle the case where there's no TestResult for this TestCase
-            // This shouldn't happen if the UI is correctly showing edit/create buttons
             clearFields();
         }
     }
@@ -136,6 +134,25 @@ public class TestResultBean implements Serializable {
         this.currentTestResult.setTestCase(testCase);
         clearFields();
     }
+
+    public void viewTestResultDetails(TestCase testCase) {
+        this.currentTestResult = testResultService.getTestResultForTestCase(testCase);
+    }
+
+    public String getCustomId() {
+        return currentTestResult != null ? currentTestResult.getCustomId() : null;
+    }
+
+    public void setCustomId(String customId) {
+        if (currentTestResult != null) {
+            currentTestResult.setCustomId(customId);
+        }
+    }
+
+    public void loadTestResult(Long id) {
+        currentTestResult = testResultService.getTestResult(id);
+    }
+
 
     // Getters and Setters
     public Long getId() {
@@ -186,8 +203,19 @@ public class TestResultBean implements Serializable {
         this.selectedTestCaseId = selectedTestCaseId;
     }
 
+    public TestResult getTestResultForTestCase(TestCase testCase) {
+        return testResultService.getTestResultForTestCase(testCase);
+    }
+
     public boolean hasTestResult(TestCase testCase) {
         return testResultService.hasTestResultForTestCase(testCase);
     }
 
+    public TestResult getCurrentTestResult() {
+        return currentTestResult;
+    }
+
+    public void setCurrentTestResult(TestResult currentTestResult) {
+        this.currentTestResult = currentTestResult;
+    }
 }

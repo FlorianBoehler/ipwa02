@@ -2,10 +2,13 @@ package com.example.ipwa02_07.beans;
 
 import com.example.ipwa02_07.entities.TestRun;
 import com.example.ipwa02_07.entities.TestCase;
+import com.example.ipwa02_07.entities.User;
 import com.example.ipwa02_07.services.TestRunService;
 import com.example.ipwa02_07.services.TestCaseService;
+import com.example.ipwa02_07.services.UserService;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.SessionScoped;
+import jakarta.faces.view.ViewScoped;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.inject.Inject;
@@ -13,13 +16,21 @@ import jakarta.inject.Named;
 import java.io.Serializable;
 import java.util.List;
 import java.util.ArrayList;
+import jakarta.faces.model.SelectItem;
+import java.util.stream.Collectors;
+import jakarta.transaction.Transactional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Named
-@SessionScoped
+@ViewScoped
 public class TestRunBean implements Serializable {
 
     @Inject
     private TestRunService testRunService;
+
+    @Inject
+    private UserService userService;
 
     @Inject
     private TestCaseService testCaseService;
@@ -29,6 +40,16 @@ public class TestRunBean implements Serializable {
     private List<TestCase> availableTestCases;
     private List<TestCase> selectedTestCases = new ArrayList<>();
     private List<TestCase> testCases;
+    private List<TestCase> unassignedTestCases;
+    private List<SelectItem> userOptions;
+
+
+    public List<TestCase> getUnassignedTestCases() {
+        if (unassignedTestCases == null) {
+            unassignedTestCases = testCaseService.getAllTestCasesNotAssignedToTestRun();
+        }
+        return unassignedTestCases;
+    }
 
     @PostConstruct
     public void init() {
@@ -102,7 +123,14 @@ public class TestRunBean implements Serializable {
         return List.of(TestRun.TestRunStatus.values());
     }
 
-    // Methods to handle TestCases in TestRun
+    public List<SelectItem> getUserOptions() {
+        List<User> users = userService.getAllUsers();
+        return users.stream()
+                .filter(user -> user.getRole() == User.UserRole.TESTER)
+                .map(user -> new SelectItem(user.getId(), user.getUsername()))
+                .collect(Collectors.toList());
+    }
+
     public void addTestCaseToTestRun(TestCase testCase) {
         if (testRun.getId() == null) {
             if (!selectedTestCases.contains(testCase)) {
@@ -119,25 +147,51 @@ public class TestRunBean implements Serializable {
         }
     }
 
+    public void assignTesterToTestCase(TestCase testCase) {
+        TestCase existingTestCase = testCaseService.getTestCase(testCase.getId());
+        if (existingTestCase != null) {
+            if (testCase.getAssignedUserId() != null) {
+                User assignedUser = userService.getUserById(testCase.getAssignedUserId());
+                existingTestCase.setAssignedUser(assignedUser);
+            } else {
+                existingTestCase.setAssignedUser(null);
+            }
+            testCaseService.updateTestCase(existingTestCase);
+
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Tester assigned successfully"));
+        } else {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Test case not found"));
+        }
+    }
+
+    @Transactional
     public void removeTestCaseFromTestRun(TestCase testCase) {
         FacesContext facesContext = FacesContext.getCurrentInstance();
 
-        if (testRun.getId() == null) {
-            selectedTestCases.remove(testCase);
-            facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Test Case removed from selection"));
-        } else {
-            if (testCaseService.hasRelatedTestResults(testCase.getId())) {
-                facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Cannot remove Test Case with related Test Results"));
-                return;
-            }
-
-            TestRun updatedTestRun = testRunService.removeTestCaseFromTestRun(testRun.getId(), testCase.getId());
-            if (updatedTestRun != null) {
-                this.testRun = updatedTestRun;
-                facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Test Case removed from Test Run"));
+        try {
+            if (testRun.getId() == null) {
+                selectedTestCases.remove(testCase);
+                facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Test Case removed from selection"));
             } else {
-                facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Failed to remove Test Case from Test Run"));
+                if (testCaseService.hasRelatedTestResults(testCase.getId())) {
+                    facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Cannot remove Test Case with related Test Results"));
+                    return;
+                }
+
+                TestRun updatedTestRun = testRunService.removeTestCaseFromTestRun(testRun.getId(), testCase.getId());
+                if (updatedTestRun != null) {
+                    this.testRun = updatedTestRun;
+                    facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Test Case removed from Test Run"));
+                } else {
+                    facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Failed to remove Test Case from Test Run"));
+                }
             }
+        } catch (Exception e) {
+            facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "An unexpected error occurred: " + e.getMessage()));
+            // Log the exception
+            Logger.getLogger(TestRunBean.class.getName()).log(Level.SEVERE, "Error removing TestCase from TestRun", e);
         }
     }
 

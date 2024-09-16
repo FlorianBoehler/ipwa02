@@ -124,6 +124,10 @@
             </p:messages>
 
             <h:panelGrid columns="2" cellpadding="5">
+
+                <p:outputLabel for="customId" value="Test Result ID:" />
+                <p:outputLabel id="customId" value="#{testResultBean.customId}" rows="1" cols="50" />
+
                 <p:outputLabel for="status" value="Status:" />
                 <p:selectOneMenu id="status" value="#{testResultBean.status}" required="true">
                     <f:selectItem itemLabel="Select Status" itemValue="" noSelectionOption="true" />

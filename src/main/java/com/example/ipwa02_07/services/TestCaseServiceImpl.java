@@ -105,5 +105,11 @@ public class TestCaseServiceImpl implements TestCaseService {
         return query.getSingleResult() > 0;
     }
 
+    @Override
+    public List<TestCase> getAllTestCasesNotAssignedToTestRun() {
+        return em.createQuery("SELECT tc FROM TestCase tc WHERE tc.testRun IS NULL", TestCase.class)
+                .getResultList();
+    }
+
 
 }

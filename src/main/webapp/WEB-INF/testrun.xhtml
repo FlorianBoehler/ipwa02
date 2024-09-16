@@ -44,12 +44,87 @@
             </p:panelGrid>
 
 
-            <p:commandButton value="Save" action="#{testRunBean.saveTestRun}" update="testRunForm :testRunListForm:testRunList"/>
-            <p:commandButton value="Clear" action="#{testRunBean.clearForm}" update="testRunForm" process="@this"/>
+            <p:commandButton value="Save" action="#{testRunBean.saveTestRun}" update=":testCasesDialogForm:availableTestCaseList testRunForm :testRunListForm:testRunList"/>
+            <p:commandButton value="Clear" action="#{testRunBean.clearForm}" update=":testCasesDialogForm:availableTestCaseList testRunForm" process="@this"/>
         </p:panel>
     </h:form>
 
-    ö
+    <p:dialog header="Manage Test Cases" widgetVar="testCasesDialog" modal="true" width="80%" height="80%">
+        <h:form id="testCasesDialogForm">
+            <p:panel header="Available Test Cases">
+                <p:dataTable id="availableTestCaseList" value="#{testRunBean.unassignedTestCases}" var="testCase"
+                             paginator="true" rows="5"
+                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             rowsPerPageTemplate="5,10,15">
+                    <p:column headerText="Title" sortBy="#{testCase.title}">
+                        <h:outputText value="#{testCase.title}"/>
+                    </p:column>
+                    <p:column headerText="Description">
+                        <h:outputText value="#{testCase.description}" />
+                    </p:column>
+
+                    <p:column headerText="Expected Result">
+                        <h:outputText value="#{testCase.expectedResult}" />
+                    </p:column>
+
+                    <p:column headerText="Requirement" sortBy="#{testCase.requirement.title}">
+                        <h:outputText value="#{testCase.requirement.title}" />
+                    </p:column>
+                    <p:column headerText="Actions" style="width:100px;text-align:center">
+                        <p:commandButton value="Add"
+                                         action="#{testRunBean.addTestCaseToTestRun(testCase)}"
+                                         update=":testCasesDialogForm :testCasesDialogForm:availableTestCaseList"
+                                         icon="pi pi-plus"
+                                         disabled="#{testRunBean.isTestCaseAlreadyAdded(testCase)}"
+                                         styleClass="ui-button-secondary"
+                                         title="#{testRunBean.isTestCaseAlreadyAdded(testCase) ? 'This test case is already added' : 'Add this test case to the test run'}"/>
+                    </p:column>
+                </p:dataTable>
+            </p:panel>
+
+            <p:panel header="Selected Test Cases for Test Run" style="margin-top:20px;">
+                <p:dataTable id="testRunTestCaseList"
+                             value="#{testRunBean.testRun.id == null ? testRunBean.selectedTestCases : testRunBean.testRun.testCases}"
+                             var="testCase"
+                             paginator="true" rows="5"
+                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             rowsPerPageTemplate="5,10,15">
+                    <p:column headerText="Title" sortBy="#{testCase.title}">
+                        <h:outputText value="#{testCase.title}"/>
+                    </p:column>
+                    <p:column headerText="Description">
+                        <h:outputText value="#{testCase.description}" />
+                    </p:column>
+
+                    <p:column headerText="Expected Result">
+                        <h:outputText value="#{testCase.expectedResult}" />
+                    </p:column>
+
+                    <p:column headerText="Requirement" sortBy="#{testCase.requirement.title}">
+                        <h:outputText value="#{testCase.requirement.title}" />
+                    </p:column>
+                    <p:column headerText="Assigned Tester" sortBy="#{testCase.assignedUser.username}">
+                        <h:outputText value="#{testCase.assignedUser.username}" />
+                    </p:column>
+                    <p:column headerText="Assign new Tester">
+                        <p:selectOneMenu id="assignedUser" value="#{testCase.assignedUserId}">
+                            <f:selectItem itemLabel="Select User" itemValue="" />
+                            <f:selectItems value="#{testCaseBean.userOptions}" />
+                            <p:ajax event="change" listener="#{testRunBean.assignTesterToTestCase(testCase)}" update=":testCasesDialogForm:testRunTestCaseList" />
+                        </p:selectOneMenu>
+                    </p:column>
+                    <p:column headerText="Actions" style="width:100px;text-align:center">
+                        <p:commandButton value="Remove"
+                                         action="#{testRunBean.removeTestCaseFromTestRun(testCase)}"
+                                         update=":testCasesDialogForm :testCasesDialogForm:availableTestCaseList" icon="pi pi-times" />
+                    </p:column>
+                </p:dataTable>
+            </p:panel>
+            <div style="text-align: right; margin-top: 10px;">
+                <p:commandButton value="Close" onclick="PF('testCasesDialog').hide()" type="button" icon="pi pi-times" />
+            </div>
+        </h:form>
+    </p:dialog>
 
 
     <h:form id="testRunListForm">
@@ -107,22 +182,71 @@
               modal="true"
               showEffect="fade"
               hideEffect="fade"
-              resizable="false">
+              resizable="false"
+              width="90%"
+              height="80%">
         <h:form id="testCasesViewForm">
             <p:dataTable id="testCasesTable"
                          value="#{testRunBean.selectedTestRun.testCases}"
-                         var="testCase">
-                <p:column headerText="ID">
+                         var="testCase"
+                         paginator="true"
+                         rows="10"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15">
+                <p:column headerText="ID" sortBy="#{testCase.customId}">
                     <h:outputText value="#{testCase.customId}" />
                 </p:column>
-                <p:column headerText="Title">
+                <p:column headerText="Title" sortBy="#{testCase.title}">
                     <h:outputText value="#{testCase.title}" />
                 </p:column>
                 <p:column headerText="Description">
                     <h:outputText value="#{testCase.description}" />
                 </p:column>
+                <p:column headerText="Expected Result">
+                    <h:outputText value="#{testCase.expectedResult}" />
+                </p:column>
+                <p:column headerText="Requirement" sortBy="#{testCase.requirement.title}">
+                    <h:outputText value="#{testCase.requirement.title}" />
+                </p:column>
+                <p:column headerText="Assigned Tester" sortBy="#{testCase.assignedUser.username}">
+                    <h:outputText value="#{testCase.assignedUser.username}" />
+                </p:column>
+                <p:column headerText="Test Result Status">
+                    <h:outputText value="#{testResultBean.getTestResultForTestCase(testCase).status}"
+                                  rendered="#{testResultBean.hasTestResult(testCase)}" />
+                </p:column>
+                <p:column headerText="Test Result Details">
+                    <p:commandButton icon="pi pi-eye"
+                                     action="#{testResultBean.viewTestResultDetails(testCase)}"
+                                     oncomplete="PF('testResultDetailsDialog').show()"
+                                     rendered="#{testResultBean.hasTestResult(testCase)}"
+                                     title="View Test Result Details"
+                                     styleClass="ui-button-secondary ui-button-sm" />
+                </p:column>
             </p:dataTable>
         </h:form>
+    </p:dialog>
+
+    <p:dialog header="Test Result Details" widgetVar="testResultDetailsDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false">
+        <h:panelGrid columns="2" cellpadding="5">
+
+            <h:outputText value="ID:" />
+            <h:outputText value="#{testResultBean.customId}" />
+
+            <h:outputText value="Status:" />
+            <h:outputText value="#{testResultBean.currentTestResult.status}" />
+
+            <h:outputText value="Result:" />
+            <h:outputText value="#{testResultBean.currentTestResult.result}" />
+
+            <h:outputText value="Comment:" />
+            <h:outputText value="#{testResultBean.currentTestResult.comment}" />
+
+            <h:outputText value="Execution Date:" />
+            <h:outputText value="#{testResultBean.currentTestResult.executionDate}">
+                <f:converter converterId="localDateTimeConverter" />
+            </h:outputText>
+        </h:panelGrid>
     </p:dialog>
 
 </h:body>

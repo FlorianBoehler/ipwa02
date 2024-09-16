@@ -99,17 +99,20 @@ public class TestRunServiceImpl implements TestRunService {
     }
 
     @Override
+    @Transactional
     public TestRun removeTestCaseFromTestRun(Long testRunId, Long testCaseId) {
         TestRun testRun = em.find(TestRun.class, testRunId);
-        if (testRun != null) {
-            TestCase testCase = em.find(TestCase.class, testCaseId);
-            if (testCase != null) {
-                testRun.getTestCases().remove(testCase);
-                testCase.setTestRun(null);
-                em.merge(testRun);
-                em.merge(testCase);
-                return testRun;
-            }
+        TestCase testCase = em.find(TestCase.class, testCaseId);
+
+        if (testRun != null && testCase != null) {
+            testRun.getTestCases().remove(testCase);
+            testCase.setTestRun(null);
+
+            em.merge(testRun);
+            em.merge(testCase);
+            em.flush();
+
+            return testRun;
         }
         return null;
     }

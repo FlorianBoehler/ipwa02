@@ -28,6 +28,9 @@ public class TestCase implements Serializable {
     @Column(nullable = false, length = 1000)
     private String expectedResult;
 
+    @Column(name = "assigned_user_id")
+    private Long assignedUserId;
+
     @ManyToOne
     @JoinColumn(name = "requirement_id", nullable = false)
     private Requirement requirement;
@@ -35,6 +38,10 @@ public class TestCase implements Serializable {
     @ManyToOne
     @JoinColumn(name = "test_run_id")
     private TestRun testRun;
+
+    @ManyToOne
+    @JoinColumn(name = "assigned_user_id", insertable = false, updatable = false)
+    private User assignedUser;
 
     // Constructors, Getters and Setters
 
@@ -48,9 +55,8 @@ public class TestCase implements Serializable {
         this.requirement = requirement;
     }
 
-    @ManyToOne
-    @JoinColumn(name = "assigned_user_id")
-    private User assignedUser;
+
+
 
     // Getters and Setters for all fields
     public Long getId() {
@@ -121,4 +127,12 @@ public class TestCase implements Serializable {
 
     public void setTestRun(TestRun testRun) { this.testRun = testRun; }
 
+    public Long getAssignedUserId() {
+        return assignedUserId;
+    }
+
+    public void setAssignedUserId(Long id) {
+        this.assignedUserId = id;
+        this.assignedUser = null;
+    }
 }
