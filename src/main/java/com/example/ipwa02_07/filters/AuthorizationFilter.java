@@ -7,7 +7,6 @@ import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 @WebFilter(filterName = "AuthorizationFilter", urlPatterns = {"*.xhtml"})
 public class AuthorizationFilter implements Filter {
@@ -16,7 +15,7 @@ public class AuthorizationFilter implements Filter {
     private LoginBean loginBean;
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain){
         try {
             HttpServletRequest reqt = (HttpServletRequest) request;
             HttpServletResponse resp = (HttpServletResponse) response;
@@ -62,7 +61,7 @@ public class AuthorizationFilter implements Filter {
     }
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {}
+    public void init(FilterConfig filterConfig) {}
 
     @Override
     public void destroy() {}

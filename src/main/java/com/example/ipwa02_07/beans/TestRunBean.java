@@ -7,7 +7,6 @@ import com.example.ipwa02_07.services.TestRunService;
 import com.example.ipwa02_07.services.TestCaseService;
 import com.example.ipwa02_07.services.UserService;
 import jakarta.annotation.PostConstruct;
-import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.view.ViewScoped;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
@@ -41,8 +40,6 @@ public class TestRunBean implements Serializable {
     private List<TestCase> selectedTestCases = new ArrayList<>();
     private List<TestCase> testCases;
     private List<TestCase> unassignedTestCases;
-    private List<SelectItem> userOptions;
-
 
     public List<TestCase> getUnassignedTestCases() {
         if (unassignedTestCases == null) {
@@ -63,10 +60,6 @@ public class TestRunBean implements Serializable {
 
     public void loadAvailableTestCases() {
         availableTestCases = testCaseService.getAllTestCases();
-    }
-
-    public void refreshTestCases() {
-        loadAvailableTestCases();
     }
 
     public void saveTestRun() {
@@ -121,14 +114,6 @@ public class TestRunBean implements Serializable {
 
     public List<TestRun.TestRunStatus> getStatusOptions() {
         return List.of(TestRun.TestRunStatus.values());
-    }
-
-    public List<SelectItem> getUserOptions() {
-        List<User> users = userService.getAllUsers();
-        return users.stream()
-                .filter(user -> user.getRole() == User.UserRole.TESTER)
-                .map(user -> new SelectItem(user.getId(), user.getUsername()))
-                .collect(Collectors.toList());
     }
 
     public void addTestCaseToTestRun(TestCase testCase) {
@@ -190,8 +175,6 @@ public class TestRunBean implements Serializable {
             }
         } catch (Exception e) {
             facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "An unexpected error occurred: " + e.getMessage()));
-            // Log the exception
-            Logger.getLogger(TestRunBean.class.getName()).log(Level.SEVERE, "Error removing TestCase from TestRun", e);
         }
     }
 
@@ -222,14 +205,6 @@ public class TestRunBean implements Serializable {
         this.testRuns = testRuns;
     }
 
-    public List<TestCase> getAvailableTestCases() {
-        return availableTestCases;
-    }
-
-    public void setAvailableTestCases(List<TestCase> availableTestCases) {
-        this.availableTestCases = availableTestCases;
-    }
-
     public List<TestCase> getSelectedTestCases() {
         return selectedTestCases;
     }
@@ -238,11 +213,4 @@ public class TestRunBean implements Serializable {
         this.selectedTestCases = selectedTestCases;
     }
 
-    public List<TestCase> getTestCases() {
-        return testCases;
-    }
-
-    public void setTestCases(List<TestCase> testCases) {
-        this.testCases = testCases;
-    }
 }

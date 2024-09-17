@@ -16,7 +16,6 @@ public interface TestResultService {
     List<TestResult> getAllTestResults();
     void updateTestResult(TestResult testResult);
     void deleteTestResult(Long id);
-    List<TestResult> getTestResultsByStatus(TestResult.Status status);
     TestResult getTestResultForTestCase(TestCase testCase);
     boolean hasTestResultForTestCase(TestCase testCase);
 }

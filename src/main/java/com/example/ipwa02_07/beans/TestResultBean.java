@@ -4,7 +4,6 @@ import com.example.ipwa02_07.entities.TestResult;
 import com.example.ipwa02_07.entities.TestCase;
 import com.example.ipwa02_07.services.TestResultService;
 import com.example.ipwa02_07.services.TestCaseService;
-import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -38,12 +37,7 @@ public class TestResultBean implements Serializable {
     private String comment;
     private LocalDateTime executionDate;
     private Long filteredTestCaseId;
-    private Long selectedTestCaseId;
     private LazyDataModel<TestResult> lazyModel;
-
-    public void setFilteredTestCaseId(Long testCaseId) {
-        this.filteredTestCaseId = testCaseId;
-    }
 
     public LazyDataModel<TestResult> getLazyModel() {
         if (lazyModel == null) {
@@ -87,11 +81,6 @@ public class TestResultBean implements Serializable {
         }
 
         clearFields();
-        // You might want to refresh the testCaseTable here
-    }
-
-    public List<TestResult> getAllTestResults() {
-        return testResultService.getAllTestResults();
     }
 
     public void clearFields() {
@@ -122,11 +111,6 @@ public class TestResultBean implements Serializable {
                 .collect(Collectors.toList());
     }
 
-    public List<SelectItem> getTestCaseOptions() {
-        return testCaseService.getAllTestCases().stream()
-                .map(tc -> new SelectItem(tc.getId(), tc.getTitle()))
-                .collect(Collectors.toList());
-    }
 
     public void prepareNewTestResult(TestCase testCase) {
         this.currentTestCase = testCase;
@@ -147,10 +131,6 @@ public class TestResultBean implements Serializable {
         if (currentTestResult != null) {
             currentTestResult.setCustomId(customId);
         }
-    }
-
-    public void loadTestResult(Long id) {
-        currentTestResult = testResultService.getTestResult(id);
     }
 
 
@@ -185,22 +165,6 @@ public class TestResultBean implements Serializable {
 
     public void setComment(String comment) {
         this.comment = comment;
-    }
-
-    public LocalDateTime getExecutionDate() {
-        return executionDate;
-    }
-
-    public void setExecutionDate(LocalDateTime executionDate) {
-        this.executionDate = executionDate;
-    }
-
-    public Long getSelectedTestCaseId() {
-        return selectedTestCaseId;
-    }
-
-    public void setSelectedTestCaseId(Long selectedTestCaseId) {
-        this.selectedTestCaseId = selectedTestCaseId;
     }
 
     public TestResult getTestResultForTestCase(TestCase testCase) {

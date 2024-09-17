@@ -78,13 +78,6 @@ public class TestResultServiceImpl implements TestResultService {
     }
 
     @Override
-    public List<TestResult> getTestResultsByStatus(TestResult.Status status) {
-        return em.createQuery("SELECT tr FROM TestResult tr WHERE tr.status = :status", TestResult.class)
-                .setParameter("status", status)
-                .getResultList();
-    }
-
-    @Override
     public List<TestResult> getTestResults(int first, int pageSize, Map<String, SortMeta> sortBy, Map<String, FilterMeta> filterBy) {
         StringBuilder queryBuilder = new StringBuilder("SELECT tr FROM TestResult tr WHERE 1=1");
 

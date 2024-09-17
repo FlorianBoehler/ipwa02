@@ -96,6 +96,15 @@ public class User implements Serializable {
         return BCrypt.checkpw(password, this.password);
     }
 
+    // Enum for User Roles
+    public enum UserRole {
+        REQUIREMENTS_ENGINEER,
+        TEST_MANAGER,
+        TEST_CREATOR,
+        TESTER,
+        ADMIN
+    }
+
     // Getters and Setters
     public Long getId() {
         return id;
@@ -111,10 +120,6 @@ public class User implements Serializable {
 
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
     }
 
     public String getEmail() {
@@ -133,13 +138,6 @@ public class User implements Serializable {
         this.role = role;
     }
 
-    public List<TestCase> getAssignedTestCases() {
-        return assignedTestCases;
-    }
-
-    public void setAssignedTestCases(List<TestCase> assignedTestCases) {
-        this.assignedTestCases = assignedTestCases;
-    }
 
     public boolean isActive() {
         return active;
@@ -149,23 +147,4 @@ public class User implements Serializable {
         this.active = active;
     }
 
-    // Helper methods for managing the bidirectional relationship
-    public void addTestCase(TestCase testCase) {
-        assignedTestCases.add(testCase);
-        testCase.setAssignedUser(this);
-    }
-
-    public void removeTestCase(TestCase testCase) {
-        assignedTestCases.remove(testCase);
-        testCase.setAssignedUser(null);
-    }
-
-    // Enum for User Roles
-    public enum UserRole {
-        REQUIREMENTS_ENGINEER,
-        TEST_MANAGER,
-        TEST_CREATOR,
-        TESTER,
-        ADMIN
-    }
 }

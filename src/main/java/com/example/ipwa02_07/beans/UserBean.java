@@ -110,14 +110,24 @@ public class UserBean implements Serializable {
 
         // Getters and setters
     public User getUser() { return user; }
+
     public void setUser(User user) { this.user = user; }
+
     public List<User> getUsers() { return users; }
+
     public User getSelectedUser() { return selectedUser; }
+
     public void setSelectedUser(User selectedUser) { this.selectedUser = selectedUser; }
+
     public String getNewPassword() { return newPassword; }
+
     public void setNewPassword(String newPassword) { this.newPassword = newPassword; }
+
     public String getConfirmPassword() { return confirmPassword; }
+
     public void setConfirmPassword(String confirmPassword) { this.confirmPassword = confirmPassword; }
+
     public boolean getIsFirstUser() { return isFirstUser; }
+
     public void setIsFirstUser(boolean isFirstUser) { this.isFirstUser = isFirstUser; }
 }

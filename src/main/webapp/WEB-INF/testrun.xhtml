@@ -219,6 +219,7 @@
                     <p:commandButton icon="pi pi-eye"
                                      action="#{testResultBean.viewTestResultDetails(testCase)}"
                                      oncomplete="PF('testResultDetailsDialog').show()"
+                                     update=":testResultDetailsForm"
                                      rendered="#{testResultBean.hasTestResult(testCase)}"
                                      title="View Test Result Details"
                                      styleClass="ui-button-secondary ui-button-sm" />
@@ -227,27 +228,32 @@
         </h:form>
     </p:dialog>
 
-    <p:dialog header="Test Result Details" widgetVar="testResultDetailsDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false">
-        <h:panelGrid columns="2" cellpadding="5">
+    <p:dialog header="Test Result Details"
+              widgetVar="testResultDetailsDialog"
+              modal="true"
+              showEffect="fade"
+              hideEffect="fade"
+              resizable="false">
+        <h:form id="testResultDetailsForm">
+            <h:panelGrid columns="2" cellpadding="5">
+                <h:outputText value="ID:" />
+                <h:outputText value="#{testResultBean.currentTestResult.customId}" />
 
-            <h:outputText value="ID:" />
-            <h:outputText value="#{testResultBean.customId}" />
+                <h:outputText value="Status:" />
+                <h:outputText value="#{testResultBean.currentTestResult.status}" />
 
-            <h:outputText value="Status:" />
-            <h:outputText value="#{testResultBean.currentTestResult.status}" />
+                <h:outputText value="Result:" />
+                <h:outputText value="#{testResultBean.currentTestResult.result}" />
 
-            <h:outputText value="Result:" />
-            <h:outputText value="#{testResultBean.currentTestResult.result}" />
+                <h:outputText value="Comment:" />
+                <h:outputText value="#{testResultBean.currentTestResult.comment}" />
 
-            <h:outputText value="Comment:" />
-            <h:outputText value="#{testResultBean.currentTestResult.comment}" />
-
-            <h:outputText value="Execution Date:" />
-            <h:outputText value="#{testResultBean.currentTestResult.executionDate}">
-                <f:converter converterId="localDateTimeConverter" />
-            </h:outputText>
-        </h:panelGrid>
+                <h:outputText value="Execution Date:" />
+                <h:outputText value="#{testResultBean.currentTestResult.executionDate}">
+                    <f:converter converterId="localDateTimeConverter" />
+                </h:outputText>
+            </h:panelGrid>
+        </h:form>
     </p:dialog>
-
 </h:body>
 </html>

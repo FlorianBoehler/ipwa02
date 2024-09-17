@@ -7,11 +7,8 @@ public interface UserService {
     User authenticate(String username, String password);
     User createUser(User user, String plainPassword);
     User updateUser(User user);
-    void activateUser(Long id);
-    void deactivateUser(Long id);
     User getUserById(Long id);
     List<User> getAllUsers();
-    List<User> getActiveUsers();
     User getUserByUsername(String username);
-    void changePassword(Long userId, String newPassword);
+
 }

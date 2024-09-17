@@ -5,7 +5,6 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.Iterator;
 
 @Entity
 @Table(name = "test_runs")
@@ -45,16 +44,6 @@ public class TestRun implements Serializable {
         PLANNED,
         IN_PROGRESS,
         COMPLETED
-    }
-
-    public void addTestCase(TestCase testCase) {
-        testCases.add(testCase);
-        testCase.setTestRun(this);
-    }
-
-    public void removeTestCase(TestCase testCase) {
-        testCases.remove(testCase);
-        testCase.setTestRun(null);
     }
 
 
@@ -115,13 +104,8 @@ public class TestRun implements Serializable {
         this.status = status;
     }
 
-    public Set<TestCase> getTestCases() {
-        return testCases;
-    }
+    public Set<TestCase> getTestCases() { return testCases; }
 
-    public void setTestCases(Set<TestCase> testCases) {
-        this.testCases = testCases;
-    }
-
+    public void setTestCases(Set<TestCase> testCases) { this.testCases = testCases; }
 
 }

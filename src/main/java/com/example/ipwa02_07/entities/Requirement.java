@@ -35,7 +35,6 @@ public class Requirement implements Serializable {
     @OneToMany(mappedBy = "requirement", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TestCase> testCases = new ArrayList<>();
 
-    // Constructors
     public Requirement() {
     }
 
@@ -45,6 +44,15 @@ public class Requirement implements Serializable {
         this.priority = priority;
         this.status = status;
         this.creationDate = LocalDateTime.now();
+    }
+
+    // Enums for Priority and Status
+    public enum Priority {
+        MUST, SHOULD, COULD
+    }
+
+    public enum Status {
+        NEW, IN_PROGRESS, COMPLETED
     }
 
     // Getters and Setters
@@ -96,54 +104,5 @@ public class Requirement implements Serializable {
         this.status = status;
     }
 
-    public LocalDateTime getCreationDate() {
-        return creationDate;
-    }
 
-    public void setCreationDate(LocalDateTime creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    public List<TestCase> getTestCases() {
-        return testCases;
-    }
-
-    public void setTestCases(List<TestCase> testCases) {
-        this.testCases = testCases;
-    }
-
-    // Helper methods for managing relationships
-    public void addTestCase(TestCase testCase) {
-        testCases.add(testCase);
-        testCase.setRequirement(this);
-    }
-
-    public void removeTestCase(TestCase testCase) {
-        testCases.remove(testCase);
-        testCase.setRequirement(null);
-    }
-
-    // Enums for Priority and Status
-    public enum Priority {
-        MUST, SHOULD, COULD
-    }
-
-    public enum Status {
-        NEW, IN_PROGRESS, COMPLETED
-    }
-
-
-    // Optional: toString method for easier debugging
-    @Override
-    public String toString() {
-        return "Requirement{" +
-                "id=" + id +
-                ", customId='" + customId + '\'' +
-                ", title='" + title + '\'' +
-                ", description='" + description + '\'' +
-                ", priority=" + priority +
-                ", status=" + status +
-                ", creationDate=" + creationDate +
-                '}';
-    }
 }

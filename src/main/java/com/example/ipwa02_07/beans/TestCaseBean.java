@@ -238,12 +238,4 @@ public class TestCaseBean implements Serializable {
     public void setSelectedUserId(Long selectedUserId) {
         this.selectedUserId = selectedUserId;
     }
-
-    public Long getTestRunId() {
-        return testRunId;
-    }
-
-    public void setTestRunId(Long testRunId) {
-        this.testRunId = testRunId;
-    }
 }

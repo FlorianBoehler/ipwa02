@@ -5,6 +5,7 @@ import com.example.ipwa02_07.services.UserService;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
+import jakarta.faces.context.ExternalContext;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import java.io.Serializable;
@@ -26,8 +27,13 @@ public class LoginBean implements Serializable {
     public String login() {
         User user = userService.authenticate(username, password);
         if (user != null) {
-            currentUser = user;
-            return redirectBasedOnRole(user.getRole());
+            if (user.isActive()) {
+                currentUser = user;
+                return redirectBasedOnRole(user.getRole());
+            } else {
+                facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Account is inactive", null));
+                return null;
+            }
         } else {
             facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid credentials", null));
             return null;
@@ -36,7 +42,7 @@ public class LoginBean implements Serializable {
 
     private String redirectBasedOnRole(User.UserRole role) {
         return switch (role) {
-            case ADMIN -> "/dashboard.xhtml?faces-redirect=true";
+            case ADMIN -> "/user.xhtml?faces-redirect=true";
             case REQUIREMENTS_ENGINEER -> "/dashboard.xhtml?faces-redirect=true";
             case TEST_MANAGER -> "/dashboard.xhtml?faces-redirect=true";
             case TEST_CREATOR -> "/dashboard.xhtml?faces-redirect=true";
@@ -46,7 +52,11 @@ public class LoginBean implements Serializable {
     }
 
     public String logout() {
-        facesContext.getExternalContext().invalidateSession();
+        ExternalContext externalContext = facesContext.getExternalContext();
+        externalContext.invalidateSession();
+
+        facesContext.getViewRoot().getViewMap().clear();
+
         return "/login.xhtml?faces-redirect=true";
     }
 

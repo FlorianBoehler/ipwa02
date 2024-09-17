@@ -38,13 +38,22 @@ public class TestResult implements Serializable {
     public TestResult() {
     }
 
-    public TestResult(TestCase testCase, Status status, String result, String comment) {
-        this.testCase = testCase;
 
-        this.status = status;
-        this.result = result;
-        this.comment = comment;
-        this.executionDate = LocalDateTime.now();
+    public enum Status {
+        NOT_STARTED, IN_PROGRESS, PASSED, FAILED
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TestResult that = (TestResult) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     // Getters and Setters
@@ -104,33 +113,4 @@ public class TestResult implements Serializable {
         this.executionDate = executionDate;
     }
 
-    public enum Status {
-        NOT_STARTED, IN_PROGRESS, PASSED, FAILED
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        TestResult that = (TestResult) o;
-        return Objects.equals(id, that.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
-
-    @Override
-    public String toString() {
-        return "TestResult{" +
-                "id=" + id +
-                ", customId='" + customId + '\'' +
-                ", testCase=" + testCase +
-                ", status=" + status +
-                ", result='" + result + '\'' +
-                ", comment='" + comment + '\'' +
-                ", executionDate=" + executionDate +
-                '}';
-    }
 }
