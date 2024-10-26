@@ -19,6 +19,12 @@ public class UserBean implements Serializable {
     @Inject
     private UserService userService;
 
+    @Inject
+    private FacesContext facesContext;
+
+    @Inject
+    private LoginBean loginBean;
+
     private User user = new User();
     private List<User> users;
     private User selectedUser;
@@ -40,6 +46,15 @@ public class UserBean implements Serializable {
         this.isFirstUser = users.isEmpty();
     }
 
+    public boolean isCurrentUser(User user) {
+        User loggedInUser = loginBean.getCurrentUser();
+        return loggedInUser != null && user != null && loggedInUser.getId().equals(user.getId());
+    }
+
+    public boolean canEditUser(User user) {
+        User loggedInUser = loginBean.getCurrentUser();
+        return loggedInUser != null && loggedInUser.getRole() == User.UserRole.ADMIN;
+    }
     public void saveUser() {
         try {
             if (user.getId() == null) {
@@ -52,6 +67,11 @@ public class UserBean implements Serializable {
                 FacesContext.getCurrentInstance().addMessage(null,
                         new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "User created successfully"));
             } else {
+                if (!canEditUser(user)) {
+                    FacesContext.getCurrentInstance().addMessage(null,
+                            new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "You don't have permission to edit this user"));
+                    return;
+                }
                 user = userService.updateUser(user);
                 FacesContext.getCurrentInstance().addMessage(null,
                         new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "User updated successfully"));
@@ -62,9 +82,10 @@ public class UserBean implements Serializable {
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Failed to save user: " + e.getMessage()));
         }
-
-
     }
+
+
+
 
     public void createFirstAdminUser() {
         if (!newPassword.equals(confirmPassword)) {

@@ -108,10 +108,6 @@
                                  update=":dialogForm" oncomplete="PF('testResultDialog').show()"
                                  rendered="#{testResultBean.hasTestResult(testCase)}"
                                  title="Edit Test Result" />
-                <p:commandButton icon="pi pi-trash" action="#{testResultBean.deleteTestResult(testResult)}"
-                                 update=":mainForm:testCaseTable @form" title="Delete Test Result">
-                    <p:confirm header="Confirmation" message="Are you sure you want to delete this test result?" icon="pi pi-exclamation-triangle" />
-                </p:commandButton>
             </p:column>
         </p:dataTable>
     </h:form>

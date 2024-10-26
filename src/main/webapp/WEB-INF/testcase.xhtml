@@ -75,6 +75,10 @@
             <h:outputText value="#{testCase.description}" />
         </p:column>
 
+        <p:column headerText="Preconditions">
+            <h:outputText value="#{testCase.prerequisites}" />
+        </p:column>
+
         <p:column headerText="Expected Result">
             <h:outputText value="#{testCase.expectedResult}" />
         </p:column>

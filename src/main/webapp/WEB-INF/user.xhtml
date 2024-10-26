@@ -41,7 +41,13 @@
                 <p:message for="role" />
 
                 <p:outputLabel for="active" value="Active:" />
-                <p:selectBooleanCheckbox id="active" value="#{userBean.user.active}" />
+                <h:panelGroup>
+                    <p:selectBooleanCheckbox id="active" value="#{userBean.user.active}"
+                                             disabled="#{userBean.isCurrentUser(userBean.user)}"
+                                             rendered="#{userBean.canEditUser(userBean.user)}" />
+                    <h:outputText value="#{userBean.user.active ? 'Yes' : 'No'}"
+                                  rendered="#{!userBean.canEditUser(userBean.user)}" />
+                </h:panelGroup>
                 <p:message for="active" />
             </h:panelGrid>
 
@@ -60,10 +66,7 @@
 
         </p:panel>
 
-        <p:dataTable id="userTable" value="#{userBean.users}" var="user"
-                     selection="#{userBean.selectedUser}" selectionMode="single" rowKey="#{user.id}">
-            <p:ajax event="rowSelect" listener="#{userBean.onUserSelect}" update=":userForm:userDetail :userForm:changePassword :userForm:confirmPassword" />
-
+        <p:dataTable id="userTable" value="#{userBean.users}" var="user">
             <p:column headerText="Username">
                 <h:outputText value="#{user.username}" />
             </p:column>
@@ -76,7 +79,14 @@
             <p:column headerText="Active">
                 <h:outputText value="#{user.active ? 'Yes' : 'No'}" />
             </p:column>
-
+            <p:column headerText="Action">
+                <p:commandButton icon="pi pi-pencil"
+                                 action="#{userBean.onUserSelect}"
+                                 process="@this"
+                                 update=":userForm:userDetail :userForm:changePassword :userForm:confirmPassword">
+                    <f:setPropertyActionListener target="#{userBean.selectedUser}" value="#{user}" />
+                </p:commandButton>
+            </p:column>
         </p:dataTable>
 
 

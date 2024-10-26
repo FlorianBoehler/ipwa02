@@ -81,13 +81,6 @@ public class RequirementServiceImpl implements RequirementService {
     }
 
     @Override
-    public List<Requirement> getRequirementsByPriority(Requirement.Priority priority) {
-        return em.createQuery("SELECT r FROM Requirement r WHERE r.priority = :priority", Requirement.class)
-                .setParameter("priority", priority)
-                .getResultList();
-    }
-
-    @Override
     public List<Requirement> getRequirements(int first, int pageSize, Map<String, SortMeta> sortBy, Map<String, FilterMeta> filterBy) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Requirement> cq = cb.createQuery(Requirement.class);

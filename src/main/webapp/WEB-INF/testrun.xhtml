@@ -129,7 +129,7 @@
 
     <h:form id="testRunListForm">
         <p:dataTable id="testRunList" value="#{testRunBean.testRuns}" var="testRun"
-                     paginator="true" rows="10"
+                     paginator="true" rows="10" paginatorPosition="bottom"
                      paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                      rowsPerPageTemplate="5,10,15">
             <f:facet name="header">
@@ -142,6 +142,10 @@
 
             <p:column headerText="Name" sortBy="#{testRun.name}" >
                 <h:outputText value="#{testRun.name}"/>
+            </p:column>
+
+            <p:column headerText="Description" sortBy="#{testRun.name}" >
+                <h:outputText value="#{testRun.description}"/>
             </p:column>
 
             <p:column headerText="Start Date" sortBy="#{testRun.startDate}">

@@ -13,7 +13,6 @@ public interface RequirementService {
     List<Requirement> getAllRequirements();
     void updateRequirement(Requirement requirement);
     void deleteRequirement(Long id);
-    List<Requirement> getRequirementsByPriority(Requirement.Priority priority);
     List<Requirement> getRequirements(int first, int pageSize, Map<String, SortMeta> sortBy, Map<String, FilterMeta> filterBy);
     int countRequirements(Map<String, FilterMeta> filterBy);
     boolean hasRelatedTestCases(Long requirementId);
