@@ -49,7 +49,6 @@ graph TD
 ## Security Measures
 
 - Implementation of input validation
-- Use of PreparedStatements to prevent SQL injection
 - Authentication and authorization for different user roles
 
 ## License
